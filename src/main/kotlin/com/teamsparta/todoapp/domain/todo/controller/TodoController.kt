@@ -27,11 +27,11 @@ class TodoController(private val todoService: TodoService) {
         .body(todoService.getTodoById(todoId))
 
     @PostMapping
-    fun createTodo(@RequestBody createTodo: CreateTodoRequest)
+    fun createTodo(@RequestBody createTodoRequest: CreateTodoRequest)
     :ResponseEntity<TodoResponse>
     = ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(todoService.createTodo(createTodo))
+        .body(todoService.createTodo(createTodoRequest))
 
     @PutMapping("/{todoId}")
     fun updateTodo(@PathVariable todoId: Long,
@@ -46,5 +46,5 @@ class TodoController(private val todoService: TodoService) {
     :ResponseEntity<Unit>
     = ResponseEntity
         .status(HttpStatus.NO_CONTENT)
-        .build()
+        .body(todoService.deleteTodo(todoId))
 }
