@@ -8,4 +8,5 @@ data class TodoResponse(
     val description:String,
     val createdDate:LocalDateTime,
     val writer:String,
+    val success:Boolean,
 )

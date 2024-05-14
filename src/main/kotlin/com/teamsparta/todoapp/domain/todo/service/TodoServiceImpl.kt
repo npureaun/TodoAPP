@@ -18,7 +18,7 @@ class TodoServiceImpl(
 ):TodoService {
 
     override fun getAllTodoList(): List<TodoResponse> {
-        val todoList = todoRepository.findAllByOrderByCreatedDateDesc()
+        val todoList = todoRepository.findAllByOrderBySuccessAscCreatedDateDesc()
         if(todoList.isEmpty()) { throw ModelNotFoundException("Todo",0) }
         return todoList.map { it.toResponse() }
     }
@@ -36,7 +36,8 @@ class TodoServiceImpl(
                 title = request.title,
                 description = request.description,
                 writer = request.writer,
-                createdDate = LocalDateTime.now()
+                createdDate = LocalDateTime.now(),
+                success = false
             )
         ).toResponse()
     }
@@ -49,6 +50,14 @@ class TodoServiceImpl(
         todo.description=request.description
         todo.writer=request.writer
         todo.createdDate=LocalDateTime.now()
+        return todoRepository.save(todo).toResponse()
+    }
+
+    @Transactional
+    override fun successTodo(todoId: Long): TodoResponse {
+        val todo=todoRepository.findByIdOrNull(todoId)
+            ?: throw ModelNotFoundException("Todo", todoId)
+        todo.success=!todo.success
         return todoRepository.save(todo).toResponse()
     }
 

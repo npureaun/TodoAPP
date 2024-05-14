@@ -18,6 +18,9 @@ class Todo (
 
     @Column(name = "writer")
     var writer: String,
+
+    @Column(name = "success")
+    var success: Boolean,
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +34,6 @@ fun Todo.toResponse(): TodoResponse {
         description = description,
         createdDate = createdDate,
         writer = writer,
+        success = success
     )
 }

@@ -9,5 +9,6 @@ interface TodoService {
     fun getTodoById(todoId: Long): TodoResponse
     fun createTodo(request: CreateTodoRequest): TodoResponse
     fun updateTodo(todoId: Long, request: UpdateTodoRequest): TodoResponse
+    fun successTodo(todoId: Long): TodoResponse
     fun deleteTodo(todoId: Long)
 }

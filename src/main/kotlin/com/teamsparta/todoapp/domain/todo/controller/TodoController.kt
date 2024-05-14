@@ -1,6 +1,7 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
 import com.teamsparta.todoapp.domain.todo.dto.CreateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.SuccessTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.UpdateTodoRequest
 import com.teamsparta.todoapp.domain.todo.service.TodoService
@@ -40,6 +41,14 @@ class TodoController(private val todoService: TodoService) {
     = ResponseEntity
         .status(HttpStatus.OK)
         .body(todoService.updateTodo(todoId,updateTodoRequest))
+
+    @PutMapping("/{todoId}/success")
+    fun successTodo(@PathVariable todoId: Long,
+                   @RequestBody successRequest: SuccessTodoRequest)
+            : ResponseEntity<TodoResponse>
+            = ResponseEntity
+        .status(HttpStatus.OK)
+        .body(todoService.successTodo(todoId))
 
     @DeleteMapping("/{todoId}")
     fun deleteTodo(@PathVariable todoId: Long)
