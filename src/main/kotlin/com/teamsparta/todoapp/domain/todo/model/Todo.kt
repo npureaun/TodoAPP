@@ -1,5 +1,7 @@
 package com.teamsparta.todoapp.domain.todo.model
 
+import com.teamsparta.todoapp.domain.comment.model.Comment
+import com.teamsparta.todoapp.domain.comment.model.toResponse
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -27,13 +29,15 @@ class Todo (
     var id: Long? = null
 }
 
-fun Todo.toResponse(): TodoResponse {
+fun Todo.toResponse(commentList: List<Comment> = emptyList())
+: TodoResponse {
     return TodoResponse(
         id = id!!,
         title = title,
         description = description,
         createdDate = createdDate,
         writer = writer,
-        success = success
+        success = success,
+        commentList = commentList.map { it.toResponse() }
     )
 }

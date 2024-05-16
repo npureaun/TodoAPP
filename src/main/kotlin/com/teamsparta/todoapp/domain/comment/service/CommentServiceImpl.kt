@@ -2,6 +2,7 @@ package com.teamsparta.todoapp.domain.comment.service
 
 import com.teamsparta.todoapp.domain.comment.dto.CommentResponse
 import com.teamsparta.todoapp.domain.comment.dto.CreateCommentRequest
+import com.teamsparta.todoapp.domain.comment.dto.UpdateCommentRequest
 import com.teamsparta.todoapp.domain.comment.model.Comment
 import com.teamsparta.todoapp.domain.comment.model.toResponse
 import com.teamsparta.todoapp.domain.comment.repository.CommentRepository
@@ -16,9 +17,10 @@ class CommentServiceImpl(
     private val commentRepository: CommentRepository,
     private val todoRepository: TodoRepository,
 ): CommentService {
-    override fun getAllComment()
+    override fun getAllComment(todoId: Long)
             : List<CommentResponse>{
-        TODO("Not yet implemented")
+        val comments = commentRepository.findAllByTodoId(todoId)
+        return comments.map { it.toResponse() }
     }
 
     @Transactional
@@ -35,5 +37,24 @@ class CommentServiceImpl(
 
         commentRepository.save(comment)
         return comment.toResponse()
+    }
+
+    override fun updateComment(commentId:Long, request: UpdateCommentRequest): CommentResponse {
+        val comment= commentRepository.findByIdOrNull(commentId)
+            ?: throw ModelNotFoundException("Comment", commentId)
+        if(request.writer != comment.writer
+            || request.passWord!=comment.password){
+            throw ModelNotFoundException("writer.password", commentId)
+        }
+
+        comment.comment = request.comment
+        return commentRepository.save(comment).toResponse()
+    }
+
+    override fun deleteComment(commentId: Long) {
+        val comment= commentRepository.findByIdOrNull(commentId)
+            ?: throw ModelNotFoundException("Comment", commentId)
+
+        commentRepository.delete(comment)
     }
 }

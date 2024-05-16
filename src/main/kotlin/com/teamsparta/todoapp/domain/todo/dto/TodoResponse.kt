@@ -1,5 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.dto
 
+import com.teamsparta.todoapp.domain.comment.dto.CommentResponse
 import java.time.LocalDateTime
 
 data class TodoResponse(
@@ -9,4 +10,5 @@ data class TodoResponse(
     val createdDate:LocalDateTime,
     val writer:String,
     val success:Boolean,
+    var commentList:List<CommentResponse>,
 )

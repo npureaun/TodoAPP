@@ -1,5 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.service
 
+import com.teamsparta.todoapp.domain.comment.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
 import com.teamsparta.todoapp.domain.todo.dto.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
@@ -14,7 +15,8 @@ import java.time.LocalDateTime
 
 @Service
 class TodoServiceImpl(
-    private val todoRepository: TodoRepository
+    private val todoRepository: TodoRepository,
+    private val commentRepository: CommentRepository,
 ):TodoService {
 
     override fun getAllTodoList(): List<TodoResponse> {
@@ -26,7 +28,7 @@ class TodoServiceImpl(
     override fun getTodoById(todoId: Long): TodoResponse {
         val todo=todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
-        return todo.toResponse()
+        return todo.toResponse(commentRepository.findAllByTodoId(todoId))
     }
 
     @Transactional
@@ -49,7 +51,6 @@ class TodoServiceImpl(
         todo.title=request.title
         todo.description=request.description
         todo.writer=request.writer
-        todo.createdDate=LocalDateTime.now()
         return todoRepository.save(todo).toResponse()
     }
 
