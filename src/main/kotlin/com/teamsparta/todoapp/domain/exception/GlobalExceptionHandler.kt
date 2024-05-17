@@ -15,8 +15,8 @@ class GlobalExceptionHandler {
             .body(ErrorResponse(message = e.message, errorCode = null))
     }
 
-    @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(e: IllegalStateException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(PasswordUnMatchingException::class)
+    fun handleIllegalStateException(e: PasswordUnMatchingException): ResponseEntity<ErrorResponse> {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
             .body(ErrorResponse(e.message,errorCode = null))

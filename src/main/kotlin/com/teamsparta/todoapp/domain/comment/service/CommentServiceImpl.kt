@@ -8,6 +8,7 @@ import com.teamsparta.todoapp.domain.comment.model.Comment
 import com.teamsparta.todoapp.domain.comment.model.toResponse
 import com.teamsparta.todoapp.domain.comment.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
+import com.teamsparta.todoapp.domain.exception.PasswordUnMatchingException
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
@@ -39,7 +40,7 @@ class CommentServiceImpl(
             ?: throw ModelNotFoundException("Comment", commentId)
         if(request.writer != comment.writer
             || request.passWord!=comment.password){
-            throw ModelNotFoundException("writer.password", commentId)
+            throw PasswordUnMatchingException("UPDATE")
         }
 
         comment.comment = request.comment
@@ -51,7 +52,7 @@ class CommentServiceImpl(
             ?: throw ModelNotFoundException("Comment", commentId)
         if(request.writer != comment.writer
             || request.passWord!=comment.password){
-            throw ModelNotFoundException("writer.password", commentId)
+            throw PasswordUnMatchingException("DELETE")
         }
 
         commentRepository.delete(comment)
