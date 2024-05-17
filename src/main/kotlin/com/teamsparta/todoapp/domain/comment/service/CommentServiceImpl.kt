@@ -18,12 +18,6 @@ class CommentServiceImpl(
     private val commentRepository: CommentRepository,
     private val todoRepository: TodoRepository,
 ): CommentService {
-    override fun getAllComment(todoId: Long)
-            : List<CommentResponse>{
-        val comments = commentRepository.findAllByTodoId(todoId)
-        return comments.map { it.toResponse() }
-    }
-
     @Transactional
     override fun createComment(todoId: Long,request: CreateCommentRequest): CommentResponse {
         val todo=todoRepository.findByIdOrNull(todoId)

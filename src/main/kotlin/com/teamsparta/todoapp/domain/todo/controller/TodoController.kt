@@ -1,7 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
 import com.teamsparta.todoapp.domain.todo.dto.CreateTodoRequest
-import com.teamsparta.todoapp.domain.todo.dto.SuccessTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.UpdateTodoRequest
 import com.teamsparta.todoapp.domain.todo.service.TodoService
@@ -43,8 +42,7 @@ class TodoController(private val todoService: TodoService) {
         .body(todoService.updateTodo(todoId,updateTodoRequest))
 
     @PutMapping("/{todoId}/success")
-    fun successTodo(@PathVariable todoId: Long,
-                   @RequestBody successRequest: SuccessTodoRequest)
+    fun successTodo(@PathVariable todoId: Long)
             : ResponseEntity<TodoResponse>
             = ResponseEntity
         .status(HttpStatus.OK)

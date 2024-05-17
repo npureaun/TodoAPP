@@ -12,13 +12,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/todos/{todoId}/comments")
 @RestController
 class CommentController(private val commentService: CommentService) {
-    @GetMapping
-    fun getCommentList(@PathVariable todoId: Long)
-            : ResponseEntity<List<CommentResponse>>
-    = ResponseEntity
-        .status(HttpStatus.OK)
-        .body(commentService.getAllComment(todoId))
-
     @PostMapping
     fun createComment(
         @PathVariable todoId: Long,
@@ -49,3 +42,8 @@ class CommentController(private val commentService: CommentService) {
         .status(HttpStatus.NO_CONTENT)
         .body(commentService.deleteComment(commentId,deleteCommentRequest))
 }
+
+
+
+
+
