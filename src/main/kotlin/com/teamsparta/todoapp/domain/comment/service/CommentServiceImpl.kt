@@ -2,6 +2,7 @@ package com.teamsparta.todoapp.domain.comment.service
 
 import com.teamsparta.todoapp.domain.comment.dto.CommentResponse
 import com.teamsparta.todoapp.domain.comment.dto.CreateCommentRequest
+import com.teamsparta.todoapp.domain.comment.dto.DeleteCommentRequest
 import com.teamsparta.todoapp.domain.comment.dto.UpdateCommentRequest
 import com.teamsparta.todoapp.domain.comment.model.Comment
 import com.teamsparta.todoapp.domain.comment.model.toResponse
@@ -51,9 +52,13 @@ class CommentServiceImpl(
         return commentRepository.save(comment).toResponse()
     }
 
-    override fun deleteComment(commentId: Long) {
+    override fun deleteComment(commentId: Long,request: DeleteCommentRequest) {
         val comment= commentRepository.findByIdOrNull(commentId)
             ?: throw ModelNotFoundException("Comment", commentId)
+        if(request.writer != comment.writer
+            || request.passWord!=comment.password){
+            throw ModelNotFoundException("writer.password", commentId)
+        }
 
         commentRepository.delete(comment)
     }
