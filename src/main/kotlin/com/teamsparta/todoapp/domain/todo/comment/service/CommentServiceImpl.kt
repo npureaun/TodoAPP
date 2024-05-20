@@ -1,12 +1,12 @@
-package com.teamsparta.todoapp.domain.comment.service
+package com.teamsparta.todoapp.domain.todo.comment.service
 
-import com.teamsparta.todoapp.domain.comment.dto.CommentResponse
-import com.teamsparta.todoapp.domain.comment.dto.CreateCommentRequest
-import com.teamsparta.todoapp.domain.comment.dto.DeleteCommentRequest
-import com.teamsparta.todoapp.domain.comment.dto.UpdateCommentRequest
-import com.teamsparta.todoapp.domain.comment.model.Comment
-import com.teamsparta.todoapp.domain.comment.model.toResponse
-import com.teamsparta.todoapp.domain.comment.repository.CommentRepository
+import com.teamsparta.todoapp.domain.todo.comment.dto.CommentResponse
+import com.teamsparta.todoapp.domain.todo.comment.dto.CreateCommentRequest
+import com.teamsparta.todoapp.domain.todo.comment.dto.DeleteCommentRequest
+import com.teamsparta.todoapp.domain.todo.comment.dto.UpdateCommentRequest
+import com.teamsparta.todoapp.domain.todo.comment.model.Comment
+import com.teamsparta.todoapp.domain.todo.comment.model.toResponse
+import com.teamsparta.todoapp.domain.todo.comment.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
 import com.teamsparta.todoapp.domain.exception.PasswordUnMatchingException
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
@@ -19,12 +19,13 @@ class CommentServiceImpl(
     private val commentRepository: CommentRepository,
     private val todoRepository: TodoRepository,
 ): CommentService {
+
     @Transactional
     override fun createComment(todoId: Long,request: CreateCommentRequest): CommentResponse {
         val todo=todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
 
-        val comment=Comment(
+        val comment= Comment(
             writer = request.writer,
             password = request.passWord,
             comment = request.comment,
@@ -35,6 +36,7 @@ class CommentServiceImpl(
         return comment.toResponse()
     }
 
+    @Transactional
     override fun updateComment(commentId:Long, request: UpdateCommentRequest): CommentResponse {
         val comment= commentRepository.findByIdOrNull(commentId)
             ?: throw ModelNotFoundException("Comment", commentId)
@@ -44,9 +46,10 @@ class CommentServiceImpl(
         }
 
         comment.comment = request.comment
-        return commentRepository.save(comment).toResponse()
+        return comment.toResponse()
     }
 
+    @Transactional
     override fun deleteComment(commentId: Long,request: DeleteCommentRequest) {
         val comment= commentRepository.findByIdOrNull(commentId)
             ?: throw ModelNotFoundException("Comment", commentId)

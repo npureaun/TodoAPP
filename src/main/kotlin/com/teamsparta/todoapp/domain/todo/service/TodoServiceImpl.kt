@@ -1,10 +1,8 @@
 package com.teamsparta.todoapp.domain.todo.service
 
-import com.teamsparta.todoapp.domain.comment.repository.CommentRepository
+import com.teamsparta.todoapp.domain.todo.comment.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
-import com.teamsparta.todoapp.domain.todo.dto.CreateTodoRequest
-import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
-import com.teamsparta.todoapp.domain.todo.dto.UpdateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.*
 import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.domain.todo.model.toResponse
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
@@ -19,14 +17,29 @@ class TodoServiceImpl(
     private val commentRepository: CommentRepository,
 ):TodoService {
 
-    override fun getAllTodoList(): List<TodoResponse> {
-        val todoList = todoRepository.findAllByOrderBySuccessAscCreatedDateDesc()
-        if(todoList.isEmpty()) { throw ModelNotFoundException("Todo",0) }
+    override fun getAllTodoList(sortBy: SortTodoSelector): List<TodoResponse> {
+        val todoList = when (sortBy) {
+            SortTodoSelector.SUCCESS_ASC_DATE_ASC
+            -> todoRepository.findAllByOrderBySuccessAscCreatedDateAsc()
+
+            SortTodoSelector.SUCCESS_DESC_DATE_ASC
+            -> todoRepository.findAllByOrderBySuccessDescCreatedDateAsc()
+
+            SortTodoSelector.SUCCESS_ASC_DATE_DESC
+            -> todoRepository.findAllByOrderBySuccessAscCreatedDateDesc()
+
+            SortTodoSelector.SUCCESS_DESC_DATE_DESC
+            -> todoRepository.findAllByOrderBySuccessDescCreatedDateDesc()
+        }
+
+        if (todoList.isEmpty()) {
+            throw ModelNotFoundException("Todo", 0)
+        }
         return todoList.map { it.toResponse() }
     }
 
     override fun getTodoById(todoId: Long): TodoResponse {
-        val todo=todoRepository.findByIdOrNull(todoId)
+        val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
         return todo.toResponse(commentRepository.findAllByTodoId(todoId))
     }
@@ -38,7 +51,6 @@ class TodoServiceImpl(
                 title = request.title,
                 description = request.description,
                 writer = request.writer,
-                createdDate = LocalDateTime.now(),
                 success = false
             )
         ).toResponse()
@@ -46,25 +58,27 @@ class TodoServiceImpl(
 
     @Transactional
     override fun updateTodo(todoId: Long, request: UpdateTodoRequest): TodoResponse {
-        val todo=todoRepository.findByIdOrNull(todoId)
+        val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
-        todo.title=request.title
-        todo.description=request.description
-        todo.writer=request.writer
-        return todoRepository.save(todo).toResponse()
+        with(todo) {
+            title = request.title
+            description = request.description
+            writer = request.writer
+        }
+        return todo.toResponse()
     }
 
     @Transactional
     override fun successTodo(todoId: Long): TodoResponse {
-        val todo=todoRepository.findByIdOrNull(todoId)
+        val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
-        todo.success=!todo.success
-        return todoRepository.save(todo).toResponse()
+        todo.success = !todo.success
+        return todo.toResponse()
     }
 
     @Transactional
     override fun deleteTodo(todoId: Long) {
-        val todo=todoRepository.findByIdOrNull(todoId)
+        val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
         todoRepository.delete(todo)
     }

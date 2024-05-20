@@ -1,8 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
-import com.teamsparta.todoapp.domain.todo.dto.CreateTodoRequest
-import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
-import com.teamsparta.todoapp.domain.todo.dto.UpdateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.*
 import com.teamsparta.todoapp.domain.todo.service.TodoService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,11 +11,11 @@ import org.springframework.web.bind.annotation.*
 class TodoController(private val todoService: TodoService) {
 
     @GetMapping
-    fun getTodoList()
+    fun getTodoList(@RequestParam(defaultValue = "SUCCESS_ASC_DATE_DESC") sortBy: SortTodoSelector)
     : ResponseEntity<List<TodoResponse>>
     = ResponseEntity
         .status(HttpStatus.OK)
-        .body(todoService.getAllTodoList())
+        .body(todoService.getAllTodoList(sortBy))
 
     @GetMapping("/{todoId}")
     fun getTodoById(@PathVariable todoId: Long)
@@ -41,7 +39,7 @@ class TodoController(private val todoService: TodoService) {
         .status(HttpStatus.OK)
         .body(todoService.updateTodo(todoId,updateTodoRequest))
 
-    @PutMapping("/{todoId}/success")
+    @PatchMapping("/{todoId}/success")
     fun successTodo(@PathVariable todoId: Long)
             : ResponseEntity<TodoResponse>
             = ResponseEntity

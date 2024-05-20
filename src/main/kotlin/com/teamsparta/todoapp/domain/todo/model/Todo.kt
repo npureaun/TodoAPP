@@ -1,13 +1,13 @@
 package com.teamsparta.todoapp.domain.todo.model
 
-import com.teamsparta.todoapp.domain.comment.model.Comment
-import com.teamsparta.todoapp.domain.comment.model.toResponse
+import com.teamsparta.todoapp.domain.todo.comment.model.Comment
+import com.teamsparta.todoapp.domain.todo.comment.model.toResponse
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "todo_list")
+@Table(name = "todos")
 class Todo (
     @Column(name = "title")
     var title: String,
@@ -16,7 +16,7 @@ class Todo (
     var description: String,
 
     @Column(name = "created_date")
-    var createdDate: LocalDateTime,
+    var createdDate:LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "writer")
     var writer: String,

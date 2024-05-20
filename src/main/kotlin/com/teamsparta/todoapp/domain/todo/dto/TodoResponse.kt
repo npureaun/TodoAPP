@@ -1,6 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.dto
 
-import com.teamsparta.todoapp.domain.comment.dto.CommentResponse
+import com.teamsparta.todoapp.domain.todo.comment.dto.CommentResponse
 import java.time.LocalDateTime
 
 data class TodoResponse(
