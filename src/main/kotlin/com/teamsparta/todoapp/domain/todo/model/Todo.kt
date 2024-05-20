@@ -22,7 +22,7 @@ class Todo (
     var writer: String,
 
     @Column(name = "success")
-    var success: Boolean,
+    var success: Boolean=false,
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

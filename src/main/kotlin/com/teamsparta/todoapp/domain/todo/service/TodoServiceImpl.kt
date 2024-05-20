@@ -43,7 +43,6 @@ class TodoServiceImpl(
                 title = request.title,
                 description = request.description,
                 writer = request.writer,
-                success = false
             )
         ).toResponse()
     }
