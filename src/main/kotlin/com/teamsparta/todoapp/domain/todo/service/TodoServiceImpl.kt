@@ -9,7 +9,6 @@ import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class TodoServiceImpl(
@@ -17,20 +16,13 @@ class TodoServiceImpl(
     private val commentRepository: CommentRepository,
 ):TodoService {
 
-    override fun getAllTodoList(sortBy: SortTodoSelector): List<TodoResponse> {
-        val todoList = when (sortBy) {
-            SortTodoSelector.SUCCESS_ASC_DATE_ASC
-            -> todoRepository.findAllByOrderBySuccessAscCreatedDateAsc()
+    override fun getAllTodoList(sortBy: SortTodoSelector, writer:String): List<TodoResponse> {
+        val todoList =
+            if(writer.isEmpty())
+                todoRepository.findAllWithSort(sortBy.sort)
+            else
+                todoRepository.findWriterWithSort(sortBy.sort,writer)
 
-            SortTodoSelector.SUCCESS_DESC_DATE_ASC
-            -> todoRepository.findAllByOrderBySuccessDescCreatedDateAsc()
-
-            SortTodoSelector.SUCCESS_ASC_DATE_DESC
-            -> todoRepository.findAllByOrderBySuccessAscCreatedDateDesc()
-
-            SortTodoSelector.SUCCESS_DESC_DATE_DESC
-            -> todoRepository.findAllByOrderBySuccessDescCreatedDateDesc()
-        }
 
         if (todoList.isEmpty()) {
             throw ModelNotFoundException("Todo", 0)

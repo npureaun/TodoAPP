@@ -15,8 +15,8 @@ class Todo (
     @Column(name = "description")
     var description: String,
 
-    @Column(name = "created_date")
-    var createdDate:LocalDateTime = LocalDateTime.now(),
+    @Column(name = "created")
+    var created:LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "writer")
     var writer: String,
@@ -35,7 +35,7 @@ fun Todo.toResponse(commentList: List<Comment> = emptyList())
         id = id!!,
         title = title,
         description = description,
-        createdDate = createdDate,
+        created = created,
         writer = writer,
         success = success,
         commentList = commentList.map { it.toResponse() }
