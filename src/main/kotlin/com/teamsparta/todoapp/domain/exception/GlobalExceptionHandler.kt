@@ -22,8 +22,8 @@ class GlobalExceptionHandler {
             .body(ErrorResponse(e.message, errorCode = null))
     }
 
-    @ExceptionHandler(CreateException::class)
-    fun handleTypingStateException(e: CreateException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(CreateUpdateException::class)
+    fun handleTypingStateException(e: CreateUpdateException): ResponseEntity<ErrorResponse> {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponse(e.message, errorCode = null))

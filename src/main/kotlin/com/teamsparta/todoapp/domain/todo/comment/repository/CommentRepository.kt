@@ -10,4 +10,6 @@ interface CommentRepository: JpaRepository<Comment, Long> {
     @Override
     @EntityGraph(attributePaths = ["todo"])
     override fun findAll(): List<Comment>
+
+    fun deleteAllByTodoId(todoId:Long)
 }

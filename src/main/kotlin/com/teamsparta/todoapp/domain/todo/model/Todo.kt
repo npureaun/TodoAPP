@@ -25,8 +25,7 @@ class Todo (
     @Column(name = "success")
     var success: Boolean=false,
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name="todo_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], orphanRemoval = true, mappedBy = "todo")
     val comments: MutableList<Comment> =mutableListOf(),
 ){
     @Id

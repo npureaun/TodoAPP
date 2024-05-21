@@ -4,19 +4,27 @@ import com.teamsparta.todoapp.domain.todo.model.Todo
 import org.springframework.data.domain.Sort
 
 enum class SortTodoSelector(
-    val comparator: Comparator<Todo>
+    val sort: Sort
 ) {
     SUCCESS_ASC_DATE_ASC(
-        compareBy<Todo>{it.success}.thenBy { it.created }
-    ),
+        Sort.by(
+            Sort.Order.asc("success"),
+            Sort.Order.asc("created")
+        )),
     SUCCESS_DESC_DATE_ASC(
-        compareBy<Todo>{it.success}.reversed().thenBy { it.created }
-    ),
+        Sort.by(
+            Sort.Order.desc("success"),
+            Sort.Order.asc("created")
+        )),
     SUCCESS_ASC_DATE_DESC(
-        compareBy<Todo>{it.success}.thenBy { it.created }.reversed()
-    ),
+        Sort.by(
+            Sort.Order.asc("success"),
+            Sort.Order.desc("created")
+        )),
     SUCCESS_DESC_DATE_DESC(
-        compareBy<Todo>{it.success}.reversed().thenBy { it.created }.reversed()
-    );
+        Sort.by(
+            Sort.Order.desc("success"),
+            Sort.Order.desc("created")
+        ));
 }
 

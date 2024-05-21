@@ -7,6 +7,9 @@ import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.domain.todo.model.toResponse
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -20,23 +23,16 @@ class TodoServiceImpl(
         todoRepository.deleteAll()
     }
 
-    override fun getAllTodoList(sortBy: SortTodoSelector, writer:String): List<TodoResponse> {
-        val todoList= mutableSetOf<Todo>()
-        val comments=commentRepository.findAll()
-        comments.forEach { comment->
-            todoList.add(
-                if(writer.isEmpty()&&comment.todo.writer==writer)
-                    comment.todo
-                else
-                    comment.todo
-            )
-        }
-        if (todoList.isEmpty()) {
+    override fun getAllTodoList(sortBy: SortTodoSelector, writer:String, page:Int): Slice<TodoResponse> {
+        val pageable:Pageable = PageRequest.of(page,5, sortBy.sort)
+        val todoList = if (writer.isEmpty()) todoRepository.findAllWithSort(pageable)
+        else todoRepository.findWriterWithSort(writer,pageable)
+
+        if (todoList.isEmpty) {
             throw ModelNotFoundException("Todo", 0)
         }
-        return todoList.sortedWith(sortBy.comparator).map {
-            it.toResponse(comments.filter { i -> i.todo.id == it.id })
-        }
+
+        return todoList.map { it.toResponse(it.comments) }
     }
 
     override fun getTodoById(todoId: Long): TodoResponse {

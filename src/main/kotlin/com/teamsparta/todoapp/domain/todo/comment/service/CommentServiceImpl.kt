@@ -29,7 +29,7 @@ class CommentServiceImpl(
             writer = request.writer,
             password = request.passWord,
             comment = request.comment,
-            todo = todo
+            todo=todo,
         )
 
         commentRepository.save(comment)

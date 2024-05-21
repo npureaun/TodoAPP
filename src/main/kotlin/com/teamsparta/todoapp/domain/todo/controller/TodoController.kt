@@ -5,6 +5,7 @@ import com.teamsparta.todoapp.domain.todo.dto.*
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
 import jakarta.validation.Valid
+import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
@@ -17,12 +18,13 @@ class TodoController(private val todoService: TodoService) {
     @GetMapping
     fun getTodoList(
         @RequestParam(defaultValue = "SUCCESS_ASC_DATE_DESC") sortBy: SortTodoSelector,
-        @RequestParam(defaultValue = "") writer:String
+        @RequestParam(defaultValue = "") writer:String,
+        @RequestParam(defaultValue = "0") page:Int,
     )
-    : ResponseEntity<List<TodoResponse>>{
+    : ResponseEntity<Slice<TodoResponse>>{
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(todoService.getAllTodoList(sortBy,writer))
+            .body(todoService.getAllTodoList(sortBy,writer,page))
     }
 
     @GetMapping("/{todoId}")
