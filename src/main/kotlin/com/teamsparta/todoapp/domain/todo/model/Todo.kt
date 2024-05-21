@@ -3,6 +3,7 @@ package com.teamsparta.todoapp.domain.todo.model
 import com.teamsparta.todoapp.domain.todo.comment.model.Comment
 import com.teamsparta.todoapp.domain.todo.comment.model.toResponse
 import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
+import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -23,6 +24,10 @@ class Todo (
 
     @Column(name = "success")
     var success: Boolean=false,
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name="todo_id")
+    val comments: MutableList<Comment> =mutableListOf(),
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

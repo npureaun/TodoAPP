@@ -1,5 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
+import com.teamsparta.todoapp.domain.exception.CreateUpdateException
 import com.teamsparta.todoapp.domain.todo.dto.*
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
@@ -36,11 +37,7 @@ class TodoController(private val todoService: TodoService) {
     fun createTodo(@Valid @RequestBody createTodoRequest: CreateTodoRequest,
         bindingResult: BindingResult)
     :ResponseEntity<TodoResponse>{
-        if(bindingResult.hasErrors()){
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        if(bindingResult.hasErrors()) throw CreateUpdateException("Create")
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(todoService.createTodo(createTodoRequest))
@@ -51,11 +48,7 @@ class TodoController(private val todoService: TodoService) {
                    @Valid @RequestBody updateTodoRequest: UpdateTodoRequest,
                    bindingResult: BindingResult)
     : ResponseEntity<TodoResponse> {
-        if(bindingResult.hasErrors()){
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        if(bindingResult.hasErrors()){ throw CreateUpdateException("Update") }
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(todoService.updateTodo(todoId, updateTodoRequest))
@@ -75,5 +68,13 @@ class TodoController(private val todoService: TodoService) {
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body(todoService.deleteTodo(todoId))
+    }
+
+    @DeleteMapping
+    fun clearTodos()
+            :ResponseEntity<Unit> {
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .body(todoService.clearTodos())
     }
 }

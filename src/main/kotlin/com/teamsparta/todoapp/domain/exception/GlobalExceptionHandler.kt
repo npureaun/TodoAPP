@@ -19,6 +19,13 @@ class GlobalExceptionHandler {
     fun handleIllegalStateException(e: PasswordUnMatchingException): ResponseEntity<ErrorResponse> {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
-            .body(ErrorResponse(e.message,errorCode = null))
+            .body(ErrorResponse(e.message, errorCode = null))
+    }
+
+    @ExceptionHandler(CreateException::class)
+    fun handleTypingStateException(e: CreateException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(e.message, errorCode = null))
     }
 }

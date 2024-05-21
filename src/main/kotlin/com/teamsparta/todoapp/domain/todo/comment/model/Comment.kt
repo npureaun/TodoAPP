@@ -6,6 +6,8 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "comments")
+@NamedEntityGraph(name = "Comment.withTodo"
+    , attributeNodes = [NamedAttributeNode("todo")])
 class Comment(
     @Column(name = "writer")
     var writer: String,

@@ -16,18 +16,27 @@ class TodoServiceImpl(
     private val commentRepository: CommentRepository,
 ):TodoService {
 
+    override fun clearTodos(){
+        todoRepository.deleteAll()
+    }
+
     override fun getAllTodoList(sortBy: SortTodoSelector, writer:String): List<TodoResponse> {
-        val todoList =
-            if(writer.isEmpty())
-                todoRepository.findAllWithSort(sortBy.sort)
-            else
-                todoRepository.findWriterWithSort(sortBy.sort,writer)
-
-
+        val todoList= mutableSetOf<Todo>()
+        val comments=commentRepository.findAll()
+        comments.forEach { comment->
+            todoList.add(
+                if(writer.isEmpty()&&comment.todo.writer==writer)
+                    comment.todo
+                else
+                    comment.todo
+            )
+        }
         if (todoList.isEmpty()) {
             throw ModelNotFoundException("Todo", 0)
         }
-        return todoList.map { it.toResponse() }
+        return todoList.sortedWith(sortBy.comparator).map {
+            it.toResponse(comments.filter { i -> i.todo.id == it.id })
+        }
     }
 
     override fun getTodoById(todoId: Long): TodoResponse {
