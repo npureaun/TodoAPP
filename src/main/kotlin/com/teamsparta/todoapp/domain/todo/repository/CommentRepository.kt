@@ -1,15 +1,14 @@
-package com.teamsparta.todoapp.domain.todo.comment.repository
+package com.teamsparta.todoapp.domain.todo.repository
 
-import com.teamsparta.todoapp.domain.todo.comment.model.Comment
+import com.teamsparta.todoapp.domain.todo.model.Comment
+import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface CommentRepository: JpaRepository<Comment, Long> {
     fun findAllByTodoId(todoId:Long): List<Comment>
-
-    @Override
-    @EntityGraph(attributePaths = ["todo"])
-    override fun findAll(): List<Comment>
 
     fun deleteAllByTodoId(todoId:Long)
 }

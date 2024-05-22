@@ -1,7 +1,6 @@
-package com.teamsparta.todoapp.domain.todo.comment.model
+package com.teamsparta.todoapp.domain.todo.model
 
-import com.teamsparta.todoapp.domain.todo.comment.dto.CommentResponse
-import com.teamsparta.todoapp.domain.todo.model.Todo
+import com.teamsparta.todoapp.domain.todo.dto.comment.CommentResponse
 import jakarta.persistence.*
 
 @Entity

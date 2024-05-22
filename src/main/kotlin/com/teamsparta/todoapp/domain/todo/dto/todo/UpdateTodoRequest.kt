@@ -1,4 +1,4 @@
-package com.teamsparta.todoapp.domain.todo.dto
+package com.teamsparta.todoapp.domain.todo.dto.todo
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size

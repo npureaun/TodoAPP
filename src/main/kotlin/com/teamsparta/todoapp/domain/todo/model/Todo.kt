@@ -1,9 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.model
 
-import com.teamsparta.todoapp.domain.todo.comment.model.Comment
-import com.teamsparta.todoapp.domain.todo.comment.model.toResponse
-import com.teamsparta.todoapp.domain.todo.dto.TodoResponse
-import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
+import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -25,7 +22,7 @@ class Todo (
     @Column(name = "success")
     var success: Boolean=false,
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], orphanRemoval = true, mappedBy = "todo")
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "todo")
     val comments: MutableList<Comment> =mutableListOf(),
 ){
     @Id

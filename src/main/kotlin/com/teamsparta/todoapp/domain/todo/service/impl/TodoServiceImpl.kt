@@ -1,11 +1,16 @@
-package com.teamsparta.todoapp.domain.todo.service
+package com.teamsparta.todoapp.domain.todo.service.impl
 
-import com.teamsparta.todoapp.domain.todo.comment.repository.CommentRepository
+import com.teamsparta.todoapp.domain.todo.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
-import com.teamsparta.todoapp.domain.todo.dto.*
+import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
+import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
+import com.teamsparta.todoapp.domain.todo.model.Comment
 import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.domain.todo.model.toResponse
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
+import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
+import com.teamsparta.todoapp.domain.todo.service.TodoService
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -17,7 +22,7 @@ import org.springframework.stereotype.Service
 class TodoServiceImpl(
     private val todoRepository: TodoRepository,
     private val commentRepository: CommentRepository,
-):TodoService {
+): TodoService {
 
     override fun clearTodos(){
         todoRepository.deleteAll()
@@ -27,18 +32,16 @@ class TodoServiceImpl(
         val pageable:Pageable = PageRequest.of(page,5, sortBy.sort)
         val todoList = if (writer.isEmpty()) todoRepository.findAllWithSort(pageable)
         else todoRepository.findWriterWithSort(writer,pageable)
-
         if (todoList.isEmpty) {
             throw ModelNotFoundException("Todo", 0)
         }
-
         return todoList.map { it.toResponse(it.comments) }
     }
 
     override fun getTodoById(todoId: Long): TodoResponse {
         val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw ModelNotFoundException("Todo", todoId)
-        return todo.toResponse(commentRepository.findAllByTodoId(todoId))
+        return todo.toResponse(todo.comments)
     }
 
     @Transactional

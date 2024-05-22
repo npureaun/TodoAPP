@@ -1,15 +1,16 @@
-package com.teamsparta.todoapp.domain.todo.comment.service
+package com.teamsparta.todoapp.domain.todo.service.impl
 
-import com.teamsparta.todoapp.domain.todo.comment.dto.CommentResponse
-import com.teamsparta.todoapp.domain.todo.comment.dto.CreateCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.dto.DeleteCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.dto.UpdateCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.model.Comment
-import com.teamsparta.todoapp.domain.todo.comment.model.toResponse
-import com.teamsparta.todoapp.domain.todo.comment.repository.CommentRepository
+import com.teamsparta.todoapp.domain.todo.dto.comment.CommentResponse
+import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
+import com.teamsparta.todoapp.domain.todo.dto.comment.DeleteCommentRequest
+import com.teamsparta.todoapp.domain.todo.dto.comment.UpdateCommentRequest
+import com.teamsparta.todoapp.domain.todo.model.Comment
+import com.teamsparta.todoapp.domain.todo.model.toResponse
+import com.teamsparta.todoapp.domain.todo.repository.CommentRepository
 import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
 import com.teamsparta.todoapp.domain.exception.PasswordUnMatchingException
 import com.teamsparta.todoapp.domain.todo.repository.TodoRepository
+import com.teamsparta.todoapp.domain.todo.service.CommentService
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service

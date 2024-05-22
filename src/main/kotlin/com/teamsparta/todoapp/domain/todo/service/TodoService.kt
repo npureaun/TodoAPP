@@ -1,6 +1,8 @@
 package com.teamsparta.todoapp.domain.todo.service
 
-import com.teamsparta.todoapp.domain.todo.dto.*
+import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
+import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
 import org.springframework.data.domain.Slice
 
 interface TodoService {

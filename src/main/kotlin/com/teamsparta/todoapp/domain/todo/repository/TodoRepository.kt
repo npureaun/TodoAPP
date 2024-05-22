@@ -1,11 +1,15 @@
 package com.teamsparta.todoapp.domain.todo.repository
 
+import com.teamsparta.todoapp.domain.todo.model.Comment
 import com.teamsparta.todoapp.domain.todo.model.Todo
+import jakarta.persistence.Entity
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 

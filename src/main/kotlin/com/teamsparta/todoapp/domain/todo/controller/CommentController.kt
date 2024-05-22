@@ -1,10 +1,10 @@
-package com.teamsparta.todoapp.domain.todo.comment.controller
+package com.teamsparta.todoapp.domain.todo.controller
 
-import com.teamsparta.todoapp.domain.todo.comment.dto.CommentResponse
-import com.teamsparta.todoapp.domain.todo.comment.dto.CreateCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.dto.DeleteCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.dto.UpdateCommentRequest
-import com.teamsparta.todoapp.domain.todo.comment.service.CommentService
+import com.teamsparta.todoapp.domain.todo.dto.comment.CommentResponse
+import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
+import com.teamsparta.todoapp.domain.todo.dto.comment.DeleteCommentRequest
+import com.teamsparta.todoapp.domain.todo.dto.comment.UpdateCommentRequest
+import com.teamsparta.todoapp.domain.todo.service.CommentService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

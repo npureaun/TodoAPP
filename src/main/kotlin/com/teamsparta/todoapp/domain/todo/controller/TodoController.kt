@@ -1,7 +1,9 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
 import com.teamsparta.todoapp.domain.exception.CreateUpdateException
-import com.teamsparta.todoapp.domain.todo.dto.*
+import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
+import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
 import jakarta.validation.Valid
@@ -37,7 +39,7 @@ class TodoController(private val todoService: TodoService) {
 
     @PostMapping
     fun createTodo(@Valid @RequestBody createTodoRequest: CreateTodoRequest,
-        bindingResult: BindingResult)
+                   bindingResult: BindingResult)
     :ResponseEntity<TodoResponse>{
         if(bindingResult.hasErrors()) throw CreateUpdateException("Create")
         return ResponseEntity
