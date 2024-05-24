@@ -8,6 +8,8 @@ import com.teamsparta.todoapp.domain.user.security.encode.BCHash
 import com.teamsparta.todoapp.domain.user.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import org.hibernate.service.spi.ServiceException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import javax.naming.AuthenticationException
 
@@ -16,12 +18,16 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
 
     @Transactional
     override fun signUpUser(request: SignUpUserRequest) {
-        userRepository.save(
-            User(
-                userId = request.userId,
-                userPassword = BCHash.hashPassword(request.userPassword)
+        try {
+            userRepository.save(
+                User(
+                    userId = request.userId,
+                    userPassword = BCHash.hashPassword(request.userPassword)
+                )
             )
-        )
+        } catch (e: DataIntegrityViolationException) {
+            throw ServiceException("Data Duplication")
+        }
     }
 
     @Transactional

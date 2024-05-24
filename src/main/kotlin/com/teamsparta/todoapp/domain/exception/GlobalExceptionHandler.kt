@@ -2,6 +2,8 @@ package com.teamsparta.todoapp.domain.exception
 
 import com.teamsparta.todoapp.domain.exception.dto.ErrorResponse
 import jakarta.persistence.EntityNotFoundException
+import org.hibernate.service.spi.ServiceException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -42,6 +44,13 @@ class GlobalExceptionHandler {
     fun handleTypingStateException(e: AuthenticationException): ResponseEntity<ErrorResponse> {
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse(e.message, errorCode = null))
+    }
+
+    @ExceptionHandler(ServiceException::class)
+    fun handleTypingStateException(e: ServiceException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
             .body(ErrorResponse(e.message, errorCode = null))
     }
 }
