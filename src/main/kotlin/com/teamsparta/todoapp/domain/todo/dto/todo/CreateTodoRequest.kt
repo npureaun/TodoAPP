@@ -13,4 +13,6 @@ data class CreateTodoRequest(
     val description:String,
 
     val writer:String,
+
+    val token:String?
 )

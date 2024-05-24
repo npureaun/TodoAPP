@@ -13,4 +13,5 @@ data class UpdateTodoRequest(
     val description:String,
 
     val writer:String,
+    val token:String?
 )

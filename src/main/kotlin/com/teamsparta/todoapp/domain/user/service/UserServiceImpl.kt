@@ -4,8 +4,8 @@ import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
 import com.teamsparta.todoapp.domain.user.model.User
 import com.teamsparta.todoapp.domain.user.repository.UserRepository
-import com.teamsparta.todoapp.domain.user.security.encode.BCHash
-import com.teamsparta.todoapp.domain.user.security.jwt.JwtUtil
+import com.teamsparta.todoapp.domain.security.encode.BCHash
+import com.teamsparta.todoapp.domain.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.hibernate.service.spi.ServiceException
@@ -36,8 +36,13 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
             ?: throw EntityNotFoundException("User Not Found")
         if (BCHash.verifyPassword(request.userPassword, dbPassword.userPassword))
         {
-            return JwtUtil.generateToken(request.userId)
+            return JwtUtil.generateAccessToken("userId", request.userId)
         }
         else throw AuthenticationException("User Password Not Match")
+    }
+
+    @Transactional
+    override fun getUserInfo(token:String): String{
+        return JwtUtil.getUserIdFromToken(token)!!
     }
 }

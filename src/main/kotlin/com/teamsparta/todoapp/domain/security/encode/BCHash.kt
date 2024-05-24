@@ -1,4 +1,4 @@
-package com.teamsparta.todoapp.domain.user.security.encode
+package com.teamsparta.todoapp.domain.security.encode
 
 import org.mindrot.jbcrypt.BCrypt
 

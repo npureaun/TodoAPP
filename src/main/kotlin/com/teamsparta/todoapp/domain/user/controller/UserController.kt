@@ -2,6 +2,7 @@ package com.teamsparta.todoapp.domain.user.controller
 
 import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
+import com.teamsparta.todoapp.domain.security.jwt.JwtUtil
 import com.teamsparta.todoapp.domain.user.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

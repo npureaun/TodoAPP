@@ -4,10 +4,12 @@ import com.teamsparta.todoapp.domain.exception.CreateUpdateException
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.UserTokenRequest
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
-import com.teamsparta.todoapp.domain.user.security.jwt.JwtUtil
+import com.teamsparta.todoapp.domain.security.jwt.JwtUtil
 import jakarta.validation.Valid
+import org.hibernate.service.spi.ServiceException
 import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -42,7 +44,11 @@ class TodoController(private val todoService: TodoService) {
     fun createTodo(@Valid @RequestBody createTodoRequest: CreateTodoRequest,
                    bindingResult: BindingResult)
     :ResponseEntity<TodoResponse>{
-        if(bindingResult.hasErrors()) throw CreateUpdateException("Create")
+        if(!JwtUtil.validateToken(createTodoRequest.token!!))
+            throw ServiceException("not Token")
+        if(bindingResult.hasErrors())
+            throw CreateUpdateException("Create")
+
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(todoService.createTodo(createTodoRequest))
@@ -53,6 +59,8 @@ class TodoController(private val todoService: TodoService) {
                    @Valid @RequestBody updateTodoRequest: UpdateTodoRequest,
                    bindingResult: BindingResult)
     : ResponseEntity<TodoResponse> {
+        if(JwtUtil.getUserIdFromToken(updateTodoRequest.token!!)==null)
+            throw ServiceException("not Token")
         if(bindingResult.hasErrors()){ throw CreateUpdateException("Update") }
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -60,19 +68,23 @@ class TodoController(private val todoService: TodoService) {
     }
 
     @PatchMapping("/{todoId}/success")
-    fun successTodo(@PathVariable todoId: Long)
+    fun successTodo(@PathVariable todoId: Long, @RequestBody request:UserTokenRequest)
             : ResponseEntity<TodoResponse> {
+        if(JwtUtil.getUserIdFromToken(request.token!!)==null)
+            throw ServiceException("not Token")
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(todoService.successTodo(todoId))
+            .body(todoService.successTodo(todoId,request))
     }
 
     @DeleteMapping("/{todoId}")
-    fun deleteTodo(@PathVariable todoId: Long)
+    fun deleteTodo(@PathVariable todoId: Long, @RequestBody request:UserTokenRequest)
     :ResponseEntity<Unit> {
+        if(JwtUtil.getUserIdFromToken(request.token!!)==null)
+            throw ServiceException("not Token")
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
-            .body(todoService.deleteTodo(todoId))
+            .body(todoService.deleteTodo(todoId,request))
     }
 
     @DeleteMapping

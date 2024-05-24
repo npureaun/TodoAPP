@@ -22,4 +22,8 @@ interface TodoRepository:JpaRepository<Todo, Long> {
     @Query("SELECT tl FROM Todo tl WHERE tl.writer = :written")
     fun findWriterWithSort(@Param("written") writer: String
                            , pageable: Pageable): Slice<Todo>
+
+    @Query("SELECT CASE WHEN tl.userId = :user_id THEN true ELSE false END FROM Todo tl WHERE tl.id = :todo_id")
+    fun matchingByUserIdOrBool(@Param("todo_id") todoId: Long, @Param("user_id") userId:String)
+    : Boolean
 }

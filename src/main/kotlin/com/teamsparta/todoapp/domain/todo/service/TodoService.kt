@@ -3,6 +3,7 @@ package com.teamsparta.todoapp.domain.todo.service
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.UserTokenRequest
 import org.springframework.data.domain.Slice
 
 interface TodoService {
@@ -10,7 +11,7 @@ interface TodoService {
     fun getTodoById(todoId: Long): TodoResponse
     fun createTodo(request: CreateTodoRequest): TodoResponse
     fun updateTodo(todoId: Long, request: UpdateTodoRequest): TodoResponse
-    fun successTodo(todoId: Long): TodoResponse
-    fun deleteTodo(todoId: Long)
+    fun successTodo(todoId: Long,request: UserTokenRequest): TodoResponse
+    fun deleteTodo(todoId: Long,request: UserTokenRequest)
     fun clearTodos()
 }
