@@ -6,6 +6,7 @@ import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
+import com.teamsparta.todoapp.domain.user.security.jwt.JwtUtil
 import jakarta.validation.Valid
 import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus

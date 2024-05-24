@@ -1,14 +1,15 @@
 package com.teamsparta.todoapp.domain.user.service
 
-import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
 import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
 import com.teamsparta.todoapp.domain.user.model.User
 import com.teamsparta.todoapp.domain.user.repository.UserRepository
+import com.teamsparta.todoapp.domain.user.security.encode.BCHash
+import com.teamsparta.todoapp.domain.user.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import javax.naming.AuthenticationException
 
 @Service
 class UserServiceImpl(private val userRepository: UserRepository): UserService {
@@ -18,20 +19,19 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
         userRepository.save(
             User(
                 userId = request.userId,
-                userPassword = request.userPassword
+                userPassword = BCHash.hashPassword(request.userPassword)
             )
         )
     }
 
     @Transactional
-    override fun logInUser(request: LogInUserRequest) {
-        val userInfo=userRepository.findByUserId(request.userId)
-            ?:throw EntityNotFoundException("UnMatching userId")
-        if(userInfo.userPassword==request.userPassword){
-            println(userInfo.id)
-            println(userInfo.userId)
-            println(userInfo.userPassword)
+    override fun logInUser(request: LogInUserRequest):String {
+        val dbPassword = userRepository.findByUserId(request.userId)
+            ?: throw EntityNotFoundException("User Not Found")
+        if (BCHash.verifyPassword(request.userPassword, dbPassword.userPassword))
+        {
+            return JwtUtil.generateToken(request.userId)
         }
-        else throw EntityNotFoundException("UnMatching userPassword")
+        else throw AuthenticationException("User Password Not Match")
     }
 }
