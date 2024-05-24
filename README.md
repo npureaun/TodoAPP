@@ -282,7 +282,9 @@ fun verifyPassword(inputPassword: String, hashedPassword: String): Boolean {
 }
 ```
 
-### 👾 토큰 방행에는 Jwts를 사용하였습니다.
+</details>
+
+### 👾 토큰 발행에는 Jwts를 사용하였습니다.
 <details>
 <summary><code>object JwtUtil</code></summary>
     
