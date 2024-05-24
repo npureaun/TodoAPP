@@ -4,4 +4,5 @@ data class UpdateCommentRequest(
     val writer:String,
     val passWord:String,
     val comment:String,
+    val token:String?
 )

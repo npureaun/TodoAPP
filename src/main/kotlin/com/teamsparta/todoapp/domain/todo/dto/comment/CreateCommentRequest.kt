@@ -4,4 +4,5 @@ data class CreateCommentRequest(
     val writer:String,
     val passWord:String,
     val comment:String,
+    val token:String?
 )

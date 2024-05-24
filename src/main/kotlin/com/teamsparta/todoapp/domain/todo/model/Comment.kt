@@ -16,6 +16,8 @@ class Comment(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="todo_id")
     val todo: Todo,
+
+    val userId:String
 ) {
     @Id
     @Column(name = "id")
