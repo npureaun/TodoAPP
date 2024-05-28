@@ -1,7 +1,5 @@
 package com.teamsparta.todoapp.domain.security.jwt
 
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import java.nio.charset.StandardCharsets
