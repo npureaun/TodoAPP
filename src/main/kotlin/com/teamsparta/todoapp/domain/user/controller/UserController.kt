@@ -1,9 +1,11 @@
 package com.teamsparta.todoapp.domain.user.controller
 
 import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
+import com.teamsparta.todoapp.domain.user.dto.LoginResponse
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
-import com.teamsparta.todoapp.domain.security.jwt.JwtUtil
+import com.teamsparta.todoapp.domain.user.dto.UserResponse
 import com.teamsparta.todoapp.domain.user.service.UserService
+import com.teamsparta.todoapp.infra.security.jwt.JwtUtil
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 class UserController(private val userService: UserService) {
     @PostMapping("/signup")
     fun signUpUser(@RequestBody userRequest: SignUpUserRequest)
-    : ResponseEntity<Unit> {
+    : ResponseEntity<UserResponse> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(userService.signUpUser(userRequest))
@@ -21,7 +23,7 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/login")
     fun loginUser(@RequestBody userRequest: LogInUserRequest)
-    : ResponseEntity<Any> {
+    : ResponseEntity<LoginResponse> {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userService.logInUser(userRequest))

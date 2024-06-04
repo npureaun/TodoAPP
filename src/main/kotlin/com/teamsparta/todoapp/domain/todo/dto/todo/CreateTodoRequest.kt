@@ -11,8 +11,4 @@ data class CreateTodoRequest(
     @field:NotBlank
     @field:Size(max = 1000)
     val description:String,
-
-    val writer:String,
-
-    val token:String?
 )

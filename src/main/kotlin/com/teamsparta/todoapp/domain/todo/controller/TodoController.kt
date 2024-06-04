@@ -4,15 +4,13 @@ import com.teamsparta.todoapp.domain.exception.CreateUpdateException
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
-import com.teamsparta.todoapp.domain.todo.dto.todo.UserTokenRequest
 import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
-import com.teamsparta.todoapp.domain.security.jwt.JwtUtil
 import jakarta.validation.Valid
-import org.hibernate.service.spi.ServiceException
 import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +18,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class TodoController(private val todoService: TodoService) {
 
-    @GetMapping
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('TUTOR') or hasRole('STUDENT')")
+    fun searchCourseList(@RequestParam(name = "title") title: String): ResponseEntity<List<TodoResponse>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(todoService.searchCourseList(title))
+    }
+    @GetMapping()
+    @PreAuthorize("hasRole('TUTOR') or hasRole('STUDENT')")
     fun getTodoList(
         @RequestParam(defaultValue = "SUCCESS_ASC_DATE_DESC") sortBy: SortTodoSelector,
         @RequestParam(defaultValue = "") writer:String,
@@ -33,6 +39,7 @@ class TodoController(private val todoService: TodoService) {
     }
 
     @GetMapping("/{todoId}")
+    @PreAuthorize("hasRole('TUTOR') or hasRole('STUDENT')")
     fun getTodoById(@PathVariable todoId: Long)
     : ResponseEntity<TodoResponse>{
         return ResponseEntity
@@ -41,11 +48,10 @@ class TodoController(private val todoService: TodoService) {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('TUTOR')")
     fun createTodo(@Valid @RequestBody createTodoRequest: CreateTodoRequest,
                    bindingResult: BindingResult)
     :ResponseEntity<TodoResponse>{
-        if(!JwtUtil.validateToken(createTodoRequest.token!!))
-            throw ServiceException("not Token")
         if(bindingResult.hasErrors())
             throw CreateUpdateException("Create")
 
@@ -55,12 +61,11 @@ class TodoController(private val todoService: TodoService) {
     }
 
     @PutMapping("/{todoId}")
+    @PreAuthorize("hasRole('TUTOR')")
     fun updateTodo(@PathVariable todoId: Long,
                    @Valid @RequestBody updateTodoRequest: UpdateTodoRequest,
                    bindingResult: BindingResult)
     : ResponseEntity<TodoResponse> {
-        if(JwtUtil.getUserIdFromToken(updateTodoRequest.token!!)==null)
-            throw ServiceException("not Token")
         if(bindingResult.hasErrors()){ throw CreateUpdateException("Update") }
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -68,26 +73,26 @@ class TodoController(private val todoService: TodoService) {
     }
 
     @PatchMapping("/{todoId}/success")
-    fun successTodo(@PathVariable todoId: Long, @RequestBody request:UserTokenRequest)
+    @PreAuthorize("hasRole('TUTOR') or hasRole('STUDENT')")
+    //@PreAuthorize("hasRole('TUTOR')")
+    fun successTodo(@PathVariable todoId: Long)
             : ResponseEntity<TodoResponse> {
-        if(JwtUtil.getUserIdFromToken(request.token!!)==null)
-            throw ServiceException("not Token")
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(todoService.successTodo(todoId,request))
+            .body(todoService.successTodo(todoId))
     }
 
     @DeleteMapping("/{todoId}")
-    fun deleteTodo(@PathVariable todoId: Long, @RequestBody request:UserTokenRequest)
+    @PreAuthorize("hasRole('TUTOR')")
+    fun deleteTodo(@PathVariable todoId: Long)
     :ResponseEntity<Unit> {
-        if(JwtUtil.getUserIdFromToken(request.token!!)==null)
-            throw ServiceException("not Token")
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
-            .body(todoService.deleteTodo(todoId,request))
+            .body(todoService.deleteTodo(todoId))
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole('TUTOR')")
     fun clearTodos()
             :ResponseEntity<Unit> {
         return ResponseEntity

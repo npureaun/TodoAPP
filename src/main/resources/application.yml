@@ -13,3 +13,11 @@ logging:
         orm:
           jdbc:
             bind: trace
+      springframework:
+        security: debug
+
+auth:
+  jwt:
+    issuer: team.sparta.com
+    secret: eyJhbGciOiJIUzI1NiJ91eyJSb2xlIjoiQ
+    accessTokenExpirationHour: 168

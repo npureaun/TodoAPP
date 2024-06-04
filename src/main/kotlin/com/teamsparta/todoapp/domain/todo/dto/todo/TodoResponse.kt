@@ -8,7 +8,7 @@ data class TodoResponse(
     val title:String,
     val description:String,
     val created:LocalDateTime,
-    val writer:String,
+    val nickname:String,
     val success:Boolean,
     var commentList:List<CommentResponse>,
 )

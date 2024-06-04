@@ -17,16 +17,16 @@ class Todo (
     @Column(name = "created")
     var created:LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "writer")
-    var writer: String,
-
     @Column(name = "success")
     var success: Boolean=false,
+
+    @Column(name = "nickname")
+    var nickname: String,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "todo")
     val comments: MutableList<Comment> =mutableListOf(),
 
-    val userId: String,
+    val userEmail: String,
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ fun Todo.toResponse(commentList: List<Comment> = emptyList())
         title = title,
         description = description,
         created = created,
-        writer = writer,
+        nickname = nickname,
         success = success,
         commentList = commentList.map { it.toResponse() }
     )
