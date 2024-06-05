@@ -1,6 +1,8 @@
 package com.teamsparta.todoapp.domain.todo.model
 
 import com.teamsparta.todoapp.domain.todo.dto.comment.CommentResponse
+import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
+import com.teamsparta.todoapp.domain.user.dto.UserResponse
 import com.teamsparta.todoapp.domain.user.service.UserService
 import jakarta.persistence.*
 
@@ -23,6 +25,18 @@ class Comment(
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    companion object {
+        fun saveEntity(
+            todo: Todo, request: CreateCommentRequest, userInfo: UserResponse): Comment {
+            return Comment(
+                comment = request.comment,
+                nickname = userInfo.nickname,
+                userEmail = userInfo.userEmail,
+                todo = todo,
+            )
+        }
+    }
 }
 
 fun Comment.toResponse(): CommentResponse {

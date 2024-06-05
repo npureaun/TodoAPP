@@ -1,6 +1,5 @@
 package com.teamsparta.todoapp.domain.todo.service
 
-import com.teamsparta.todoapp.domain.exception.ModelNotFoundException
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
@@ -9,7 +8,9 @@ import com.teamsparta.todoapp.domain.todo.model.toResponse
 import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepository
 import com.teamsparta.todoapp.domain.user.service.UserService
 import com.teamsparta.todoapp.infra.aop.Stopwatch
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import org.hibernate.Hibernate
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -22,6 +23,21 @@ class TodoService(
     private val todoRepository: TodoRepository,
 ) {
 
+    private fun userChecking(comparison:String) {
+        userService.getUserInfo()
+            .let {
+                if (it.userEmail != comparison) {
+                    throw IllegalArgumentException("User Not Match")
+                }
+            }
+    }
+
+    fun getTodoEntity(todoId: Long): Todo {
+        return todoRepository.findByIdOrNull(todoId)
+            ?: throw EntityNotFoundException("Todo $todoId not found")
+    }
+
+    @Transactional
     fun clearTodos() {
         todoRepository.deleteAll()
     }
@@ -30,44 +46,30 @@ class TodoService(
         val pageable: Pageable = PageRequest.of(page, 5, sortBy.sort)
         val todoList = if (writer.isEmpty()) todoRepository.findAllWithSort(pageable)
         else todoRepository.findWriterWithSort(writer, pageable)
-        if (todoList.isEmpty) {
-            throw ModelNotFoundException("Todo", 0)
-        }
         return todoList.map { it.toResponse(it.comments) }
     }
 
     @Stopwatch
     fun getTodoById(todoId: Long): TodoResponse {
-        val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw ModelNotFoundException("Todo", todoId)
-        return todo.toResponse(todo.comments)
+        return getTodoEntity(todoId).let { it.toResponse(it.comments) }
+    }
+
+    fun searchTodoList(title: String): List<TodoResponse> {
+        return todoRepository.searchTodoListByTitle(title)
+            .map { it.toResponse(it.comments) }
     }
 
     @Transactional
     fun createTodo(request: CreateTodoRequest): TodoResponse {
-        return userService.getUserInfo()
-            .let {
-                todoRepository.save(
-                    Todo(
-                        title = request.title,
-                        description = request.description,
-                        nickname = it.nickname,
-                        userEmail = it.userEmail
-                    )
-                ).toResponse()
-            }
+        return todoRepository
+            .save(Todo.saveEntity(request,userService.getUserInfo()))
+            .toResponse()
     }
 
     @Transactional
     fun updateTodo(todoId: Long, request: UpdateTodoRequest): TodoResponse {
-        val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw ModelNotFoundException("Todo", todoId)
-        userService.getUserInfo()
-            .let {
-                if(it.nickname!=todo.nickname){
-                    throw ArithmeticException("User Not Match")
-                }
-            }
+        val todo = getTodoEntity(todoId)
+        userChecking(todo.userEmail)
         with(todo) {
             title = request.title
             description = request.description
@@ -77,33 +79,18 @@ class TodoService(
 
     @Transactional
     fun successTodo(todoId: Long): TodoResponse {
-        val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw ModelNotFoundException("Todo", todoId)
-        userService.getUserInfo()
-            .let {
-                if(it.nickname!=todo.nickname){
-                    throw ArithmeticException("User Not Match")
-                }
-            }
+        val todo = getTodoEntity(todoId)
+        userChecking(todo.userEmail)
+
         todo.success = !todo.success
         return todo.toResponse()
     }
 
     @Transactional
     fun deleteTodo(todoId: Long) {
-        val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw ModelNotFoundException("Todo", todoId)
-        userService.getUserInfo()
-            .let {
-                if(it.nickname!=todo.nickname){
-                    throw ArithmeticException("User Not Match")
-                }
-            }
+        val todo = getTodoEntity(todoId)
+        userChecking(todo.userEmail)
         todoRepository.delete(todo)
-    }
-
-    fun searchCourseList(title: String): List<TodoResponse> {
-        return todoRepository.searchCourseListByTitle(title).map { it.toResponse() }
     }
 }
 

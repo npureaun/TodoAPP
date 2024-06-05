@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class CommentController(private val commentService: CommentService) {
     @PostMapping
-    @PreAuthorize("hasRole('TUTOR')")
+    @PreAuthorize("hasRole('STANDARD') or hasRole('DEVELOP')")
     fun createComment(
         @PathVariable todoId: Long,
         @RequestBody createRequest: CreateCommentRequest)
@@ -24,7 +24,7 @@ class CommentController(private val commentService: CommentService) {
     }
 
     @PutMapping("/{commentId}")
-    @PreAuthorize("hasRole('TUTOR')")
+    @PreAuthorize("hasRole('STANDARD') or hasRole('DEVELOP')")
     fun updateComment(
         @PathVariable todoId: Long,
         @PathVariable commentId: Long,
@@ -37,7 +37,7 @@ class CommentController(private val commentService: CommentService) {
 
 
     @DeleteMapping("/{commentId}")
-    @PreAuthorize("hasRole('TUTOR')")
+    @PreAuthorize("hasRole('STANDARD') or hasRole('DEVELOP')")
     fun deleteComment(
         @PathVariable todoId: Long,
         @PathVariable commentId: Long,)

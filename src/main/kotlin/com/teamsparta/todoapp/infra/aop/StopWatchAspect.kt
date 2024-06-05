@@ -14,14 +14,15 @@ class StopWatchAspect{
     private val logger = LoggerFactory.getLogger("Execution Time Logger")
 
     @Around("@annotation(com.teamsparta.todoapp.infra.aop.Stopwatch)")
-    fun run(joinPoint: ProceedingJoinPoint) {
+    fun run(joinPoint: ProceedingJoinPoint):Any {
         val stopWatch = StopWatch()
         stopWatch.start()
-        joinPoint.proceed()
+        val result= joinPoint.proceed()
         stopWatch.stop()
 
         logger.info("methodName : ${joinPoint.signature.name}" +
                 " | methodArgument : ${joinPoint.args.joinToString(", ")}"+
                 " | Execution Time: ${stopWatch.totalTimeMillis}ms")
+        return result
     }
 }

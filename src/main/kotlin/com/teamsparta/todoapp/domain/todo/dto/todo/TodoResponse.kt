@@ -7,7 +7,7 @@ data class TodoResponse(
     val id: Long,
     val title:String,
     val description:String,
-    val created:LocalDateTime,
+    val created:String,
     val nickname:String,
     val success:Boolean,
     var commentList:List<CommentResponse>,

@@ -1,6 +1,9 @@
 package com.teamsparta.todoapp.domain.todo.model
 
+import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
+import com.teamsparta.todoapp.domain.user.dto.UserResponse
 import com.teamsparta.todoapp.domain.user.model.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -27,10 +30,21 @@ class Todo (
     val comments: MutableList<Comment> =mutableListOf(),
 
     val userEmail: String,
-){
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    companion object {
+        fun saveEntity(request: CreateTodoRequest, userInfo: UserResponse): Todo {
+            return Todo(
+                title = request.title,
+                description = request.description,
+                nickname = userInfo.nickname,
+                userEmail = userInfo.userEmail
+            )
+        }
+    }
 }
 
 fun Todo.toResponse(commentList: List<Comment> = emptyList())
@@ -39,7 +53,7 @@ fun Todo.toResponse(commentList: List<Comment> = emptyList())
         id = id!!,
         title = title,
         description = description,
-        created = created,
+        created = created.toString(),
         nickname = nickname,
         success = success,
         commentList = commentList.map { it.toResponse() }

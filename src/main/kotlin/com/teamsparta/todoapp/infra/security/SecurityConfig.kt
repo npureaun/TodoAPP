@@ -30,6 +30,8 @@ class SecurityConfig(
                 it.requestMatchers(
                     "/users/login",
                     "/users/signup",
+                    "/todos",
+                    "/todos/search",
                     "/signup",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",

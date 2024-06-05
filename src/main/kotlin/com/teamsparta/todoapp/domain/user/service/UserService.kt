@@ -12,9 +12,7 @@ import com.teamsparta.todoapp.domain.user.repository.UserRepository
 import com.teamsparta.todoapp.infra.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import javax.naming.AuthenticationException
@@ -38,8 +36,8 @@ class UserService(
                 userPassword = passwordEncoder.encode(request.userPassword),
                 profile = Profile(nickname = request.nickname),
                 role = when (request.role) {
-                    UserRole.STUDENT.name -> UserRole.STUDENT
-                    UserRole.TUTOR.name -> UserRole.TUTOR
+                    UserRole.STANDARD.name -> UserRole.STANDARD
+                    UserRole.DEVELOP.name -> UserRole.DEVELOP
                     else -> throw IllegalArgumentException("Invalid role")
                 }
             )
@@ -61,7 +59,6 @@ class UserService(
             ))
     }
 
-    @Transactional
     fun getUserInfo():UserResponse{
         val authentication = SecurityContextHolder.getContext().authentication
         val principalString = authentication.principal.toString()
