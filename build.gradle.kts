@@ -40,8 +40,6 @@ dependencies {
     //Query DSL
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$queryDslVersion:jakarta")
-    implementation ("com.querydsl:querydsl-jpa")
-    implementation ("com.querydsl:querydsl-apt")
 
     //jwt
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")

@@ -28,5 +28,5 @@ class TodoRepositoryImpl(private val querydslActivator: EnableSpringDataWebSuppo
 //                }
 //            }
 //        return queryFactory.applyPagination(pageable, query).fetchResults()
-//    }//모르겠다.
+//    }//모르겠다..이런.
 }
