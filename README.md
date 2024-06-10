@@ -158,7 +158,7 @@ Error: response status is 401
 
 ### <code>ERD</code>
 
-<img width="300" alt="스크린샷 2024-05-24 오후 12 26 01" src="https://github.com/npureaun/image/assets/98468118/39b22eca-b760-4b8e-bfa1-bc9b9587013d">
+<img width="384" alt="스크린샷 2024-06-10 오전 11 51 38" src="https://github.com/npureaun/TodoApp/assets/98468118/12b24acd-91cd-44f7-8b78-0f420166ef6e">
 
 
 # <p align="right"><a href="#-목차-">🔝</a></p>
@@ -172,11 +172,8 @@ Error: response status is 401
     
 ```kotlin
 /*
-1. 코드단에서 comment 엔티티를 리스트로 가지고 있다가 조회시 그대로 보내야 하는가?
-2. 부모-자식관계지만, 따로 격리시켜놓다가 필요할때만 호출해 엮어서 보내야 하는가?
-= 2안을 선택 : 부모가 자식엔티티를 리스트로 들고 있게된다면, 의존성이 지나치게 높아질거라 판단
-이를 구현하기 위해, 매개변수 초기화로 emptyList를 주어 다른 요청에는 비어있는 데이터를 보내고,
-댓글조회가 필요한 기능일때만 쿼리를 통해 list를 넘겨주어 데이터를 채워보내는 방법을 구상
+다른 경우에는 매개변수 초기화로 emptyList를 주어 다른 요청에는 비어있는 데이터를 보내고,
+댓글조회가 필요한 기능일때만 list를 넘겨주어 데이터를 채워보내는 방법을 구상
 */
  return TodoResponse(
       id = id!!,
@@ -299,6 +296,54 @@ fun getUserIdFromToken(token: String): String
 
 </details>
 
+### 👾 <code>SpringSecurity</code>를 도입했습니다.
+<details>
+<summary><code>class SecurityConfig</code></summary>
+    
+```kotlin
+fun filterChain(http: HttpSecurity): SecurityFilterChain
+
+```
+
+</details>
+
+### 👾 <code>Token</code>에는 최소한의 정보만 담고, 유저정보는 최소정보를 토대로 조회후 UserResponse로 리턴합니다.
+<details>
+<summary><code>fun getUserInfo():UserResponse</code></summary>
+    
+```kotlin
+ return SecurityContextHolder
+    .getContext().authentication.principal.toString()
+    .let { """email=([^,]+)""".toRegex().find(it) }
+    .let { it?.groups?.get(1)?.value//토튼에서 페이로드의 email정보 추출
+        ?: throw EntityNotFoundException("User email not found in Token") }
+    .let { userRepository.findByUserEmail(it)?.toResponse()//추출된 정보로 UserTable조회후 DTO로 Return
+        ?:throw EntityNotFoundException("User Not Found")}
+
+```
+
+</details>
+
+### 👾 <code>Factory Pattern</code>을 적용해 보았습니다.
+<details>
+<summary><code>class Todo</code></summary>
+    
+```kotlin
+/* Save과정 중 Service에서 entity를 작성하는 과정이 너무 노출되고, 줄이 길이진다 판단,
+ entity save의 과정을 entity에게 위임하고자 하였고, 그에 대한 방법으로 Factory Pattern을 적용해보기로 하였음
+ companion object {
+        fun saveEntity(request: CreateTodoRequest, userInfo: UserResponse): Todo {
+            return Todo(
+                title = request.title,
+                description = request.description,
+                nickname = userInfo.nickname,
+                userEmail = userInfo.userEmail
+            )
+        }
+    }
+```
+
+</details>
 
 
 # <p align="right"><a href="#-목차-">🔝</a></p>
