@@ -3,7 +3,6 @@ package com.teamsparta.todoapp.domain.todo.model
 import com.teamsparta.todoapp.domain.todo.dto.comment.CommentResponse
 import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
 import com.teamsparta.todoapp.domain.user.dto.UserResponse
-import com.teamsparta.todoapp.domain.user.service.UserService
 import jakarta.persistence.*
 
 @Entity

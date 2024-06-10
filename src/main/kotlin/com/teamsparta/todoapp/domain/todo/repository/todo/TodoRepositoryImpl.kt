@@ -3,13 +3,10 @@ package com.teamsparta.todoapp.domain.todo.repository.todo
 import com.teamsparta.todoapp.domain.todo.model.QTodo
 import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.querydsl.QueryDslSupport
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
-import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.stereotype.Repository
 
 @Repository
-class TodoRepositoryImpl(private val querydslActivator: EnableSpringDataWebSupport.QuerydslActivator)
+class TodoRepositoryImpl
     : QueryDslSupport(), CustomTodoRepository {
 
     private val todo = QTodo.todo
@@ -20,11 +17,11 @@ class TodoRepositoryImpl(private val querydslActivator: EnableSpringDataWebSuppo
     }
 
 //    override fun findTodoListByNickname(nickname: String, pageable: Pageable)
-//    : Slice<Todo> {
-//        val query = queryFactory.selectFrom(todo)
+//    : Slice<> {
+//        val query = queryFactory.selectFrom()
 //            .apply {
 //                if (nickname.isNotBlank()) {
-//                    where(todo.nickname.eq(nickname))
+//                    where(nickname.eq(nickname))
 //                }
 //            }
 //        return queryFactory.applyPagination(pageable, query).fetchResults()

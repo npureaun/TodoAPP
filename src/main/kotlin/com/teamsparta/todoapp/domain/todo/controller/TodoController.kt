@@ -11,6 +11,8 @@ import org.springframework.data.domain.Slice
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.User
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
@@ -52,7 +54,9 @@ class TodoController(private val todoService: TodoService) {
     @PreAuthorize("hasRole('STANDARD') or hasRole('DEVELOP')")
     fun createTodo(
         @Valid @RequestBody createTodoRequest: CreateTodoRequest,
-        bindingResult: BindingResult)
+        bindingResult: BindingResult,
+//        @AuthenticationPrincipal user: User
+    )
             : ResponseEntity<TodoResponse> {
         if (bindingResult.hasErrors()) {
             val methodParameter = MethodParameter(
@@ -119,5 +123,12 @@ class TodoController(private val todoService: TodoService) {
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body(todoService.clearTodos())
+    }
+
+
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('DEVELOP')")
+    fun getUser(@AuthenticationPrincipal user: User): String {
+        return "Hello, ${user.username}!"
     }
 }

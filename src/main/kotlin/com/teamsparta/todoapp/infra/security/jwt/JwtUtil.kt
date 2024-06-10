@@ -26,12 +26,6 @@ class JwtUtil(
        }
     }
 
-    fun getUserIdFromToken(token: String): String {
-        val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
-        val claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token)
-        return claims.payload["email"].toString()
-    }
-
     fun generateAccessToken(subject:String, email: String, role:String): String {
         return generateToken(subject, email, role, Duration.ofHours(expiration))
     }

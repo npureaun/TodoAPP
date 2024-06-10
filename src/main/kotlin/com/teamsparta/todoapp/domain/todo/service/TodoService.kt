@@ -10,7 +10,6 @@ import com.teamsparta.todoapp.domain.user.service.UserService
 import com.teamsparta.todoapp.infra.aop.Stopwatch
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.hibernate.Hibernate
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -80,7 +79,7 @@ class TodoService(
     @Transactional
     fun successTodo(todoId: Long): TodoResponse {
         val todo = getTodoEntity(todoId)
-        userChecking(todo.userEmail)
+       userChecking(todo.userEmail)
 
         todo.success = !todo.success
         return todo.toResponse()
