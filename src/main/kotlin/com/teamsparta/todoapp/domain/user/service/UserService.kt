@@ -60,13 +60,12 @@ class UserService(
     }
 
     fun getUserInfo():UserResponse{
-        val authentication = SecurityContextHolder.getContext().authentication
-        val principalString = authentication.principal.toString()
-        val emailRegex = """email=([^,]+)""".toRegex()
-        val matchResult = emailRegex.find(principalString)
-        val userEmail = matchResult?.groups?.get(1)?.value
-            ?: throw EntityNotFoundException("User email not found in Token")
-        return userRepository.findByUserEmail(userEmail)?.toResponse()
-            ?: throw EntityNotFoundException("User Not Found")
+        return SecurityContextHolder
+            .getContext().authentication.principal.toString()
+            .let { """email=([^,]+)""".toRegex().find(it) }
+            .let { it?.groups?.get(1)?.value
+                ?: throw EntityNotFoundException("User email not found in Token") }
+            .let { userRepository.findByUserEmail(it)?.toResponse()
+                ?:throw EntityNotFoundException("User Not Found")}
     }
 }
