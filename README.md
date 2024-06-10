@@ -260,27 +260,6 @@ fun findAllWithSort(pageable: Pageable): Slice<Todo>
 
 </details>
 
-### 👾 password 해시는 BCrypt라이브러리를 이용하였습니다.
-<details>
-<summary><code>object BCHash</code></summary>
-    
-```kotlin
-/*
-BCrypt는 해시함수에 salt를 더해줌에도, 따로 db에 salt를 저장할 필요 없이
-해시자체에 같이 녹아든다는 점에서 편의성이 높을 것이라 판단, 어려운 해시과정을
-직접 구현하기보다 라이브러리를 통해 신뢰성 높은 알고리즘을 이용하는 것이 나을 것이라 판단
-*/
-fun hashPassword(password: String): String {
-       return BCrypt.hashpw(password,BCrypt.gensalt())
-}
-
-fun verifyPassword(inputPassword: String, hashedPassword: String): Boolean {
-        return BCrypt.checkpw(inputPassword, hashedPassword)
-}
-```
-
-</details>
-
 ### 👾 토큰 발행에는 Jwts를 사용하였습니다.
 <details>
 <summary><code>object JwtUtil</code></summary>
@@ -315,7 +294,7 @@ fun filterChain(http: HttpSecurity): SecurityFilterChain
  return SecurityContextHolder
     .getContext().authentication.principal.toString()
     .let { """email=([^,]+)""".toRegex().find(it) }
-    .let { it?.groups?.get(1)?.value//토튼에서 페이로드의 email정보 추출
+    .let { it?.groups?.get(1)?.value//토큰에서 페이로드의 email정보 추출
         ?: throw EntityNotFoundException("User email not found in Token") }
     .let { userRepository.findByUserEmail(it)?.toResponse()//추출된 정보로 UserTable조회후 DTO로 Return
         ?:throw EntityNotFoundException("User Not Found")}
@@ -344,6 +323,25 @@ fun filterChain(http: HttpSecurity): SecurityFilterChain
 ```
 
 </details>
+
+### 👾 <code>MethodArgumentNotValidException</code>을 적용해 보았으며, 
+
+### GlobalExceptionHandler가 spring에서 지원하는 예외를 쓰도록 하였습니다.
+<details>
+<summary><code>class GlobalExceptionHandler</code></summary>
+    
+```kotlin
+@ExceptionHandler(CreateUpdateException::class)
+@ExceptionHandler(EntityNotFoundException::class)
+@ExceptionHandler(AuthenticationException::class)
+@ExceptionHandler(ServiceException::class)
+@ExceptionHandler(IllegalArgumentException::class)
+@ExceptionHandler(MethodArgumentNotValidException::class)
+
+```
+
+</details>
+
 
 
 # <p align="right"><a href="#-목차-">🔝</a></p>
