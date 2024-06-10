@@ -60,8 +60,8 @@ class TodoService(
 
     @Transactional
     fun createTodo(request: CreateTodoRequest): TodoResponse {
-        return todoRepository
-            .save(Todo.saveEntity(request,userService.getUserInfo()))
+        return userService.getUserInfo()
+            .let { todoRepository.save(Todo.saveEntity(request,it)) }
             .toResponse()
     }
 
