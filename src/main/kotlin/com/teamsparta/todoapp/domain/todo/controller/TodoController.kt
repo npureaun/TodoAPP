@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 class TodoController(private val todoService: TodoService) {
 
     @GetMapping("/search")
-    fun searchCourseList(@RequestParam(name = "title") title: String)
+    fun searchTodoList(@RequestParam(name = "title") title: String)
             : ResponseEntity<List<TodoResponse>> {
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -115,16 +115,6 @@ class TodoController(private val todoService: TodoService) {
             .status(HttpStatus.NO_CONTENT)
             .body(todoService.deleteTodo(todoId))
     }
-
-    @DeleteMapping
-    @PreAuthorize("hasRole('DEVELOP')")
-    fun clearTodos()
-            : ResponseEntity<Unit> {
-        return ResponseEntity
-            .status(HttpStatus.NO_CONTENT)
-            .body(todoService.clearTodos())
-    }
-
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('DEVELOP')")
