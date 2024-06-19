@@ -35,7 +35,6 @@ class TodoService(
         return todoRepository.findByIdOrNull(todoId)
             ?: throw EntityNotFoundException("Todo $todoId not found")
     }
-
     @Transactional
     fun clearTodos() {
         todoRepository.deleteAll()

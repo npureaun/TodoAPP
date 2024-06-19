@@ -35,7 +35,6 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation ("org.mindrot:jbcrypt:0.4")
 
     //Query DSL
     implementation("com.querydsl:querydsl-jpa:$queryDslVersion:jakarta")
@@ -52,12 +51,15 @@ dependencies {
     //AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
+    //testcode
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
     testImplementation("io.mockk:mockk:$mockkVersion")
+
+    //DB
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.postgresql:postgresql")
 }

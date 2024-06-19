@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 class TodoController(private val todoService: TodoService) {
 
     @GetMapping("/search")
-    fun searchTodoList(@RequestParam(name = "title") title: String)
+    fun searchTodoList(@RequestParam(required = false,name = "title") title: String?)
             : ResponseEntity<List<TodoResponse>> {
         return ResponseEntity
             .status(HttpStatus.OK)
