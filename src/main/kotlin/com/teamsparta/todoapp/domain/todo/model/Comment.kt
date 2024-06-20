@@ -14,9 +14,8 @@ class Comment(
     @Column(name = "nickname")
     var nickname: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="todo_id")
-    val todo: Todo,
+    @Column(name = "todo_id")
+    val todoId: Long,
 
     val userEmail:String
 ) {
@@ -27,12 +26,12 @@ class Comment(
 
     companion object {
         fun saveEntity(
-            todo: Todo, request: CreateCommentRequest, userInfo: UserResponse): Comment {
+            todoId: Long, request: CreateCommentRequest, userInfo: UserResponse): Comment {
             return Comment(
                 comment = request.comment,
                 nickname = userInfo.nickname,
                 userEmail = userInfo.userEmail,
-                todo = todo,
+                todoId = todoId
             )
         }
     }

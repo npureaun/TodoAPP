@@ -1,10 +1,8 @@
 package com.teamsparta.todoapp.domain.todo.model
 
-import com.teamsparta.todoapp.domain.todo.dto.comment.CreateCommentRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.user.dto.UserResponse
-import com.teamsparta.todoapp.domain.user.model.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -26,7 +24,8 @@ class Todo (
     @Column(name = "nickname")
     var nickname: String,
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "todo")
+    @OneToMany
+    @JoinColumn(name = "todo_id")
     val comments: MutableList<Comment> =mutableListOf(),
 
     val userEmail: String,

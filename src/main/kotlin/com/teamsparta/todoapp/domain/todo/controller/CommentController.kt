@@ -7,8 +7,6 @@ import com.teamsparta.todoapp.domain.todo.service.CommentService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.User
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/todos/{todoId}/comments")
@@ -18,12 +16,11 @@ class CommentController(private val commentService: CommentService) {
     @PreAuthorize("hasRole('STANDARD') or hasRole('DEVELOP')")
     fun createComment(
         @PathVariable todoId: Long,
-        @RequestBody createRequest: CreateCommentRequest,
-        @AuthenticationPrincipal user:User)
+        @RequestBody createRequest: CreateCommentRequest)
             : ResponseEntity<CommentResponse> {
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(commentService.createComment(todoId, createRequest,user))
+            .body(commentService.createComment(todoId, createRequest))
     }
 
     @PutMapping("/{commentId}")

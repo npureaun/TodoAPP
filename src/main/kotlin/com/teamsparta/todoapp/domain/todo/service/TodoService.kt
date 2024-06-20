@@ -9,12 +9,10 @@ import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepository
 import com.teamsparta.todoapp.domain.user.service.UserService
 import com.teamsparta.todoapp.infra.aop.Stopwatch
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TodoService(
@@ -35,25 +33,14 @@ class TodoService(
         return todoRepository.findByIdOrNull(todoId)
             ?: throw EntityNotFoundException("Todo $todoId not found")
     }
-    @Transactional
-    fun clearTodos() {
-        todoRepository.deleteAll()
-    }
-
-    fun getAllTodoList(sortBy: SortTodoSelector, writer: String, page: Int): Slice<TodoResponse> {
-        val pageable: Pageable = PageRequest.of(page, 5, sortBy.sort)
-        val todoList = if (writer.isEmpty()) todoRepository.findAllWithSort(pageable)
-        else todoRepository.findWriterWithSort(writer, pageable)
-        return todoList.map { it.toResponse(it.comments) }
-    }
 
     @Stopwatch
     fun getTodoById(todoId: Long): TodoResponse {
         return getTodoEntity(todoId).let { it.toResponse(it.comments) }
     }
 
-    fun searchTodoList(title: String): List<TodoResponse> {
-        return todoRepository.searchTodoListByTitle(title)
+    fun searchTodoList(pageable: Pageable,title: String?): List<TodoResponse> {
+        return todoRepository.searchTodoListByTitle(pageable,title)
             .map { it.toResponse(it.comments) }
     }
 

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface TodoRepository:JpaRepository<Todo, Long>, CustomTodoRepository {
+interface TodoRepository:JpaRepository<Todo, Long>, TodoRepositoryCustom {
     @EntityGraph(attributePaths = ["comments"])
     @Query("SELECT tl FROM Todo tl")
     fun findAllWithSort(pageable: Pageable): Slice<Todo>
