@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 
 interface CustomTodoRepository {
-    fun searchTodoListByTitle(title: String): List<Todo>
+    fun searchTodoListByTitle(title: String?): List<Todo>
 
     //fun findTodoListByNickname(nickname: String, pageable: Pageable): Slice<Todo>
 }

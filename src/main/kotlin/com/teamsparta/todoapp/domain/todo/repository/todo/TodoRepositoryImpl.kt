@@ -1,29 +1,28 @@
 package com.teamsparta.todoapp.domain.todo.repository.todo
 
+import com.querydsl.core.BooleanBuilder
 import com.teamsparta.todoapp.domain.todo.model.QTodo
 import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.querydsl.QueryDslSupport
 import org.springframework.stereotype.Repository
+import com.teamsparta.todoapp.domain.todo.model.QComment.comment1
 
 @Repository
 class TodoRepositoryImpl
     : QueryDslSupport(), CustomTodoRepository {
 
     private val todo = QTodo.todo
-    override fun searchTodoListByTitle(title: String): List<Todo> {
-        return queryFactory.selectFrom(todo)
-            .where(todo.title.containsIgnoreCase(title))
-            .fetch()
-    }
+    override fun searchTodoListByTitle(title: String?): List<Todo> {
+        val whereClause = BooleanBuilder()
+        title?.let{whereClause.and(todo.title.containsIgnoreCase(title))}
 
-//    override fun findTodoListByNickname(nickname: String, pageable: Pageable)
-//    : Slice<> {
-//        val query = queryFactory.selectFrom()
-//            .apply {
-//                if (nickname.isNotBlank()) {
-//                    where(nickname.eq(nickname))
-//                }
-//            }
-//        return queryFactory.applyPagination(pageable, query).fetchResults()
-//    }//모르겠다..이런.
+        val result= queryFactory
+            .select(todo)
+            .from(todo)
+            .where(whereClause)
+            .leftJoin(todo.comments,comment1)
+            .fetchJoin()
+            .fetch()
+        return result
+    }
 }

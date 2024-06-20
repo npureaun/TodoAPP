@@ -1,6 +1,5 @@
 package com.teamsparta.todoapp.infra.security.jwt
 
-import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.web.authentication.WebAuthenticationDetails
 import java.io.Serializable

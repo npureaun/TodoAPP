@@ -11,10 +11,10 @@ import com.teamsparta.todoapp.domain.user.model.toResponse
 import com.teamsparta.todoapp.domain.user.repository.UserRepository
 import com.teamsparta.todoapp.infra.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import javax.naming.AuthenticationException
 
 @Service
