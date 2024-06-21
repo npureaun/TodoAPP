@@ -26,13 +26,13 @@ class JwtUtil(
        }
     }
 
-    fun generateAccessToken(subject:String, email: String, role:String): String {
-        return generateToken(subject, email, role, Duration.ofHours(expiration))
+    fun generateAccessToken(subject:String, role:String): String {
+        return generateToken(subject, role, Duration.ofHours(expiration))
     }
 
-    private fun generateToken(subject:String, email: String, role:String, expirationPeriod:Duration): String {
+    private fun generateToken(subject:String,  role:String, expirationPeriod:Duration): String {
         val claims=Jwts.claims()
-            .add(mapOf("role" to role, "email" to email))
+            .add(mapOf("role" to role))
             .build()
 
         val key: SecretKey =Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))

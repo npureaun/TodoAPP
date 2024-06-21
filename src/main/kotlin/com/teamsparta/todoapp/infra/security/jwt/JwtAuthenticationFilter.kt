@@ -29,10 +29,8 @@ class JwtAuthenticationFilter(
                     // JWT로 부터 정보 획득
                     val userId = it.payload.subject.toLong()
                     val role = it.payload.get("role", String::class.java)
-                    val email = it.payload.get("email", String::class.java)
                     val principal=UserPrincipal(
                         id=userId,
-                        email=email,
                         roles= setOf(role)
                     )
                     val authentication=JwtAuthenticationToken(

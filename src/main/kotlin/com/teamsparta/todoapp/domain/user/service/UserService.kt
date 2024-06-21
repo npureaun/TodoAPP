@@ -11,6 +11,7 @@ import com.teamsparta.todoapp.domain.user.model.toResponse
 import com.teamsparta.todoapp.domain.user.repository.UserRepository
 import com.teamsparta.todoapp.infra.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -54,7 +55,6 @@ class UserService(
         return LoginResponse(
             accessToken = jwtUtil.generateAccessToken(
                 subject = user.id.toString(),
-                email = user.userEmail,
                 role = user.role.name
             ))
     }
@@ -62,10 +62,10 @@ class UserService(
     fun getUserInfo():UserResponse{
         return SecurityContextHolder
             .getContext().authentication.principal.toString()
-            .let { """email=([^,]+)""".toRegex().find(it) }
+            .let { """id=([^,]+)""".toRegex().find(it) }
             .let { it?.groups?.get(1)?.value
-                ?: throw EntityNotFoundException("User email not found in Token") }
-            .let { userRepository.findByUserEmail(it)?.toResponse()
+                ?: throw EntityNotFoundException("User Pk not found in Token") }
+            .let { userRepository.findByIdOrNull(it.toLong())?.toResponse()
                 ?:throw EntityNotFoundException("User Not Found")}
     }
 }
