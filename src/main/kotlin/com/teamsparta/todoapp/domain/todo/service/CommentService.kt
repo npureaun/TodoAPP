@@ -8,16 +8,15 @@ import com.teamsparta.todoapp.domain.todo.model.toResponse
 import com.teamsparta.todoapp.domain.todo.repository.comment.CommentRepository
 import com.teamsparta.todoapp.domain.user.service.UserService
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CommentService(
     private val userService: UserService,
     private val commentRepository: CommentRepository,
-    private val todoService: TodoService,
 ) {
     private fun userChecking(comparison:String) {
         userService.getUserInfo()
@@ -34,16 +33,16 @@ class CommentService(
     }
 
     @Transactional
-    fun createComment(todoId: Long, request: CreateCommentRequest,user:User): CommentResponse {
-        val todo = todoService.getTodoEntity(todoId)
-
+    fun createComment(todoId: Long, request: CreateCommentRequest)
+    : CommentResponse {
         return commentRepository
-            .save(Comment.saveEntity(todo,request,userService.getUserInfo()))
+            .save(Comment.saveEntity(todoId,request,userService.getUserInfo()))
             .toResponse()
     }
 
     @Transactional
-    fun updateComment(commentId: Long, request: UpdateCommentRequest): CommentResponse {
+    fun updateComment(commentId: Long, request: UpdateCommentRequest)
+    : CommentResponse {
         val comment = getCommentEntity(commentId)
         userChecking(comment.userEmail)
         comment.comment = request.comment

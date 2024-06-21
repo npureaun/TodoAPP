@@ -1,6 +1,6 @@
 package com.teamsparta.todoapp.domain.todo.service
 
-import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepository
+import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepositoryCustom
 import com.teamsparta.todoapp.domain.user.service.UserService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -22,7 +22,7 @@ class TodoServiceTest : BehaviorSpec({
         clearAllMocks()
     }
     val userService = mockk<UserService>()
-    val todoRepository = mockk<TodoRepository>()
+    val todoRepository = mockk<TodoRepositoryCustom>()
     val todoService = TodoService(userService = userService, todoRepository = todoRepository)
 
     Given("Todo 목록이 존재하지 않을때") {

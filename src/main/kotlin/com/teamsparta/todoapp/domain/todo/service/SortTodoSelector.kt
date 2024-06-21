@@ -1,6 +1,5 @@
 package com.teamsparta.todoapp.domain.todo.service
 
-import com.teamsparta.todoapp.domain.todo.model.Todo
 import org.springframework.data.domain.Sort
 
 enum class SortTodoSelector(
