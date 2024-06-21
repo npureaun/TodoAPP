@@ -3,20 +3,16 @@ package com.teamsparta.todoapp.domain.todo.controller
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
-import com.teamsparta.todoapp.domain.todo.service.SortTodoSelector
 import com.teamsparta.todoapp.domain.todo.service.TodoService
 import jakarta.validation.Valid
 import org.springframework.core.MethodParameter
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.User
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
@@ -27,11 +23,15 @@ class TodoController(private val todoService: TodoService) {
 
     @GetMapping
     fun getTodoList(
-        @PageableDefault(size = 15, sort = ["createdAt"]) pageable: Pageable,
+        @PageableDefault(size = 15) pageable: Pageable,
         @RequestParam(required = false,name = "title") title: String?,
         @RequestParam(required = false, name = "direction", defaultValue = "DESC") direction: Sort.Direction,
     ) : ResponseEntity<List<TodoResponse>> {
-        val sortPageable= PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by(direction,"created"))
+        val sortPageable=pageable.sort
+            .map { Sort.Order(direction, it.property) }
+            .let { Sort.by(it.toList()) }
+            .let { PageRequest.of(pageable.pageNumber, pageable.pageSize, it) }
+
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(todoService.searchTodoList(sortPageable,title))
@@ -108,11 +108,5 @@ class TodoController(private val todoService: TodoService) {
         return ResponseEntity
             .status(HttpStatus.NO_CONTENT)
             .body(todoService.deleteTodo(todoId))
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('DEVELOP')")
-    fun getUser(@AuthenticationPrincipal user: User): String {
-        return "Hello, ${user.username}!"
     }
 }
