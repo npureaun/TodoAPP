@@ -1,5 +1,6 @@
 package com.teamsparta.todoapp.domain.user.model
 
+import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
 import com.teamsparta.todoapp.domain.user.dto.UserResponse
 import jakarta.persistence.*
 
@@ -20,6 +21,17 @@ class User(
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    companion object{
+        fun saveEntity(request: SignUpUserRequest, hashPassword:String, role: UserRole):User{
+            return User(
+                userEmail = request.userEmail,
+                userPassword = hashPassword,
+                profile = Profile(nickname = request.nickname),
+                role = role,
+            )
+        }
+    }
 }
 
 fun User.toResponse(): UserResponse {

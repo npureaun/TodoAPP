@@ -4,7 +4,6 @@ import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
 import com.teamsparta.todoapp.domain.user.dto.LoginResponse
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
 import com.teamsparta.todoapp.domain.user.dto.UserResponse
-import com.teamsparta.todoapp.domain.user.model.Profile
 import com.teamsparta.todoapp.domain.user.model.User
 import com.teamsparta.todoapp.domain.user.model.UserRole
 import com.teamsparta.todoapp.domain.user.model.toResponse
@@ -26,30 +25,20 @@ class UserService(
 ){
 
     @Transactional
-    fun signUpUser(request: SignUpUserRequest):UserResponse {
+    fun signUpUser(request: SignUpUserRequest,role: UserRole):UserResponse {
         if (userRepository.existsByUserEmail(request.userEmail)) {
             throw IllegalStateException("Email is already in use")
         }
-
-        return userRepository.save(
-            User(
-                userEmail = request.userEmail,
-                userPassword = passwordEncoder.encode(request.userPassword),
-                profile = Profile(nickname = request.nickname),
-                role = when (request.role) {
-                    UserRole.STANDARD.name -> UserRole.STANDARD
-                    UserRole.DEVELOP.name -> UserRole.DEVELOP
-                    else -> throw IllegalArgumentException("Invalid role")
-                }
-            )
-        ).toResponse()
+        val hashPassword=passwordEncoder.encode(request.userPassword)
+        return userRepository.save(User.saveEntity(request,hashPassword,role))
+            .toResponse()
     }
 
     @Transactional
-    fun logInUser(request: LogInUserRequest):LoginResponse {
+    fun logInUser(request: LogInUserRequest, role: UserRole):LoginResponse {
         val user = userRepository.findByUserEmail(request.userEmail)
             ?: throw EntityNotFoundException("User Not Found")
-        if (user.role.name != request.role
+        if (user.role.name != role.name
             || !passwordEncoder.matches(request.userPassword, user.userPassword))
             throw AuthenticationException("User Info Not Match")
         return LoginResponse(
