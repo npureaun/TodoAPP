@@ -29,6 +29,7 @@ class Todo (
     val comments: MutableList<Comment> =mutableListOf(),
 
     val userEmail: String,
+
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +41,7 @@ class Todo (
                 title = request.title,
                 description = request.description,
                 nickname = userInfo.nickname,
-                userEmail = userInfo.userEmail
+                userEmail = userInfo.userEmail,
             )
         }
     }

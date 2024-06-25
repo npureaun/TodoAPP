@@ -9,6 +9,7 @@ import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepository
 import com.teamsparta.todoapp.domain.user.service.UserService
 import com.teamsparta.todoapp.infra.aop.Stopwatch
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -34,13 +35,13 @@ class TodoService(
             ?: throw EntityNotFoundException("Todo $todoId not found")
     }
 
-    @Stopwatch
     fun getTodoById(todoId: Long): TodoResponse {
         return getTodoEntity(todoId).let { it.toResponse(it.comments) }
     }
 
-    fun searchTodoList(pageable: Pageable,title: String?): List<TodoResponse> {
-        return todoRepository.searchTodoListByTitle(pageable,title)
+    @Stopwatch
+    fun searchTodoList(pageable: Pageable,title: String?, tag:String?): Page<TodoResponse> {
+        return todoRepository.searchTodoListByTitle(pageable,title,tag)
             .map { it.toResponse(it.comments) }
     }
 

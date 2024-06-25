@@ -4,13 +4,13 @@ import com.teamsparta.todoapp.domain.user.dto.LogInUserRequest
 import com.teamsparta.todoapp.domain.user.dto.LoginResponse
 import com.teamsparta.todoapp.domain.user.dto.SignUpUserRequest
 import com.teamsparta.todoapp.domain.user.dto.UserResponse
-import com.teamsparta.todoapp.domain.user.model.Profile
 import com.teamsparta.todoapp.domain.user.model.User
 import com.teamsparta.todoapp.domain.user.model.UserRole
 import com.teamsparta.todoapp.domain.user.model.toResponse
 import com.teamsparta.todoapp.domain.user.repository.UserRepository
 import com.teamsparta.todoapp.infra.security.jwt.JwtUtil
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -25,36 +25,25 @@ class UserService(
 ){
 
     @Transactional
-    fun signUpUser(request: SignUpUserRequest):UserResponse {
+    fun signUpUser(request: SignUpUserRequest,role: UserRole):UserResponse {
         if (userRepository.existsByUserEmail(request.userEmail)) {
             throw IllegalStateException("Email is already in use")
         }
-
-        return userRepository.save(
-            User(
-                userEmail = request.userEmail,
-                userPassword = passwordEncoder.encode(request.userPassword),
-                profile = Profile(nickname = request.nickname),
-                role = when (request.role) {
-                    UserRole.STANDARD.name -> UserRole.STANDARD
-                    UserRole.DEVELOP.name -> UserRole.DEVELOP
-                    else -> throw IllegalArgumentException("Invalid role")
-                }
-            )
-        ).toResponse()
+        val hashPassword=passwordEncoder.encode(request.userPassword)
+        return userRepository.save(User.saveEntity(request,hashPassword,role))
+            .toResponse()
     }
 
     @Transactional
-    fun logInUser(request: LogInUserRequest):LoginResponse {
+    fun logInUser(request: LogInUserRequest, role: UserRole):LoginResponse {
         val user = userRepository.findByUserEmail(request.userEmail)
             ?: throw EntityNotFoundException("User Not Found")
-        if (user.role.name != request.role
+        if (user.role.name != role.name
             || !passwordEncoder.matches(request.userPassword, user.userPassword))
             throw AuthenticationException("User Info Not Match")
         return LoginResponse(
             accessToken = jwtUtil.generateAccessToken(
                 subject = user.id.toString(),
-                email = user.userEmail,
                 role = user.role.name
             ))
     }
@@ -62,10 +51,10 @@ class UserService(
     fun getUserInfo():UserResponse{
         return SecurityContextHolder
             .getContext().authentication.principal.toString()
-            .let { """email=([^,]+)""".toRegex().find(it) }
+            .let { """id=([^,]+)""".toRegex().find(it) }
             .let { it?.groups?.get(1)?.value
-                ?: throw EntityNotFoundException("User email not found in Token") }
-            .let { userRepository.findByUserEmail(it)?.toResponse()
+                ?: throw EntityNotFoundException("User Pk not found in Token") }
+            .let { userRepository.findByIdOrNull(it.toLong())?.toResponse()
                 ?:throw EntityNotFoundException("User Not Found")}
     }
 }
