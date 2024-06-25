@@ -1,6 +1,7 @@
 package com.teamsparta.todoapp.domain.todo.controller
 
 import com.teamsparta.todoapp.domain.todo.dto.todo.CreateTodoRequest
+import com.teamsparta.todoapp.domain.todo.dto.todo.GetTodoRequest
 import com.teamsparta.todoapp.domain.todo.dto.todo.TodoResponse
 import com.teamsparta.todoapp.domain.todo.dto.todo.UpdateTodoRequest
 import com.teamsparta.todoapp.domain.todo.service.TodoService
@@ -22,10 +23,11 @@ class TodoController(private val todoService: TodoService) {
     @GetMapping
     fun getTodoList(
         @PageableDefault(size = 15) pageable: Pageable,
-        @RequestParam(required = false,name = "title") title: String?,
-        @RequestParam(required = false,name = "tag") tag: String?,
+        @ModelAttribute getRequest: GetTodoRequest,
         @RequestParam(required = false, name = "direction", defaultValue = "DESC") direction: Sort.Direction,
     ) : ResponseEntity<Page<TodoResponse>> {
+        val request=GetTodoRequest.convertNullString(getRequest)
+
         val sortPageable=pageable.sort
             .map { Sort.Order(direction, it.property) }
             .let { Sort.by(it.toList()) }
@@ -33,7 +35,7 @@ class TodoController(private val todoService: TodoService) {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(todoService.searchTodoList(sortPageable,title,tag))
+            .body(todoService.searchTodoList(sortPageable,request.title,request.tag))
     }
 
     @GetMapping("/{todoId}")

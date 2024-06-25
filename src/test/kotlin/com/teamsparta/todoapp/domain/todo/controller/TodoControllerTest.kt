@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import java.time.LocalDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,8 +34,8 @@ class TodoControllerTest @Autowired constructor(
 
     describe("GET /todos/{todoId}") {
         context("존재하는 ID를 요청할 때"){
-            it("200 status code를 응답한다"){
-                val todoId=107L
+            it("200 status code 를 응답한다"){
+                val todoId=120L
 
                 every { todoService.getTodoById(any()) } returns TodoResponse(
                     id= todoId,
@@ -50,8 +49,7 @@ class TodoControllerTest @Autowired constructor(
 
                 val jwtToken = jwtUtil.generateAccessToken(
                     subject = "1",
-                    email = "test@gmail.com",
-                    role = "STUDENT"
+                    role = "DEVELOP"
                 )
 
                 val result = mockMvc.perform(
