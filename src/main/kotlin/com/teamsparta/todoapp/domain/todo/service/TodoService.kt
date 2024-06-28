@@ -32,7 +32,10 @@ class TodoService(
 
     fun getTodoEntity(todoId: Long): Todo {
         return todoRepository.findByIdOrNull(todoId)
-            ?: throw EntityNotFoundException("Todo $todoId not found")
+            ?.let {
+                if(it.isDelete) throw IllegalStateException("Todo $todoId is Delete")
+                else it
+            }?:throw EntityNotFoundException("Todo $todoId not found")
     }
 
     fun getTodoById(todoId: Long): TodoResponse {
@@ -76,7 +79,8 @@ class TodoService(
     fun deleteTodo(todoId: Long) {
         val todo = getTodoEntity(todoId)
         userChecking(todo.userEmail)
-        todoRepository.delete(todo)
+
+        todo.isDelete=true
     }
 }
 

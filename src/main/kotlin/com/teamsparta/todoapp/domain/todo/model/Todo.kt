@@ -29,7 +29,7 @@ class Todo (
     val comments: MutableList<Comment> =mutableListOf(),
 
     @Column(name = "is_delete")
-    val isDelete: Boolean=false,
+    var isDelete: Boolean=false,
 
     val userEmail: String,
 

@@ -1,7 +1,5 @@
 package com.teamsparta.todoapp.scheduler
 
-import com.teamsparta.todoapp.scheduler.batch.SettlementJobConfig
-import com.teamsparta.todoapp.scheduler.batch.SettlementTasklet
 import org.springframework.batch.core.*
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.scheduling.annotation.EnableScheduling
