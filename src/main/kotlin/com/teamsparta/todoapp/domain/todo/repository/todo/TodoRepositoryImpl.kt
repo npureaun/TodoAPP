@@ -60,4 +60,14 @@ class TodoRepositoryImpl
             )
         }.toTypedArray()
     }
+
+    private fun deleteSearch():BooleanBuilder?
+            = BooleanBuilder().and(todo.isDelete.isTrue)
+
+    override fun deleteByIsDelete() {
+        queryFactory
+            .delete(todo)
+            .where(deleteSearch())
+            .execute()
+    }
 }

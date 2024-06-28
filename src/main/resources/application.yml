@@ -4,6 +4,11 @@ Spring:
       hibernate:
         format_sql: true
         highlight_sql: true
+  batch:
+    job:
+      enabled: true
+    jdbc:
+      initialize-schema: always
 
 logging:
   level:

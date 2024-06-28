@@ -24,18 +24,11 @@ class TodoController(private val todoService: TodoService) {
     fun getTodoList(
         @PageableDefault(size = 15) pageable: Pageable,
         @ModelAttribute getRequest: GetTodoRequest,
-        @RequestParam(required = false, name = "direction", defaultValue = "DESC") direction: Sort.Direction,
     ) : ResponseEntity<Page<TodoResponse>> {
         val request=GetTodoRequest.convertNullString(getRequest)
-
-        val sortPageable=pageable.sort
-            .map { Sort.Order(direction, it.property) }
-            .let { Sort.by(it.toList()) }
-            .let { PageRequest.of(pageable.pageNumber, pageable.pageSize, it) }
-
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(todoService.searchTodoList(sortPageable,request.title,request.tag))
+            .body(todoService.searchTodoList(pageable,request.title,request.tag))
     }
 
     @GetMapping("/{todoId}")

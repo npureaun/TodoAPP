@@ -63,6 +63,12 @@ dependencies {
     //DB
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.postgresql:postgresql")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-batch")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.springframework.batch:spring-batch-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<KotlinCompile> {

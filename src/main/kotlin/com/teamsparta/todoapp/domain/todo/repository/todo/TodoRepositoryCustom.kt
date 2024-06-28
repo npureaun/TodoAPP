@@ -9,5 +9,6 @@ import org.springframework.data.domain.Slice
 interface TodoRepositoryCustom {
     fun searchTodoListByTitle(pageable: Pageable, title: String?, tag:String?): Page<Todo>
 
+    fun deleteByIsDelete()
     //fun findTodoListByNickname(nickname: String, pageable: Pageable): Slice<Todo>
 }

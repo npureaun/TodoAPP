@@ -28,6 +28,9 @@ class Todo (
     @JoinColumn(name = "todo_id")
     val comments: MutableList<Comment> =mutableListOf(),
 
+    @Column(name = "is_delete")
+    val isDelete: Boolean=false,
+
     val userEmail: String,
 
 ) {
