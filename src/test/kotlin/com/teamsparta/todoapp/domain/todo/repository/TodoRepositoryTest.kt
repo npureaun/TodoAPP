@@ -5,6 +5,7 @@ import com.teamsparta.todoapp.domain.todo.model.Todo
 import com.teamsparta.todoapp.domain.todo.repository.todo.TodoRepository
 import com.teamsparta.todoapp.infra.QueryDslConfig
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
