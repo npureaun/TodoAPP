@@ -13,7 +13,7 @@ class ScheduledDeletionTasks(
     private val settlementJob: Job
 ) {
 
-    @Scheduled(fixedDelay = 10000) // 5분마다 실행
+    @Scheduled(cron = "0 */10 * * * *") // 10분마다 실행
     fun performJob() {
         try {
             val jobParameters: JobParameters = JobParametersBuilder()
