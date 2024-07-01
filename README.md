@@ -34,9 +34,10 @@ User를 등록, 로그인 할 수 있습니다.
 
 ### 👾 부가기능
 
-할일 목록의 완료여부와, 생성시간을 기반으로 정렬을 선택 할 수 있습니다.
+pageable 객체를 받아와 정렬, 페이지네이션 합니다.
 
-<img width="499" alt="스크린샷 2024-05-24 오전 11 41 38" src="https://github.com/npureaun/image/assets/98468118/ba526453-27ab-4dd6-a628-da25f67d06ce">
+<img width="282" alt="스크린샷 2024-07-01 오전 11 37 15" src="https://github.com/npureaun/ReadMeUtile/assets/98468118/5bf98048-d2f8-47a5-9a1a-9abd3a20f992">
+
 
 유저정보를 저장할때, 패스워드를 암호화 합니다.
 ```ruby
@@ -75,32 +76,15 @@ todo에 딸린 comment를 불러옵니다.
 ]
 ```
 
-todo를 페이지네이션 합니다.
+스케쥴러와 배치 Job을 통해 일정시간마다 Soft Delete된 데이터를 삭제합니다.
 ```ruby
-"pageable": {
-    "pageNumber": 0,
-    "pageSize": 5,
-    "sort": {
-      "empty": false,
-      "sorted": true,
-      "unsorted": false
-    },
-    "offset": 0,
-    "paged": true,
-    "unpaged": false
-  },
-  "first": true,
-  "last": true,
-  "size": 5,
-  "number": 0,
-  "sort": {
-    "empty": false,
-    "sorted": true,
-    "unsorted": false
-  },
-  "numberOfElements": 1,
-  "empty": false
-}
+2024-07-01T11:40:00.705+09:00 DEBUG 4501 --- [   scheduling-1] org.hibernate.SQL                        : 
+    delete 
+    from
+        todos 
+    where
+        is_delete=?
+2024-07-01T11:40:00.706+09:00 TRACE 4501 --- [   scheduling-1] org.hibernate.orm.jdbc.bind              : binding parameter [1] as [BOOLEAN] - [true]
 ```
 
 
@@ -184,63 +168,6 @@ Error: response status is 401
       success = success,
       commentList = commentList.map { it.toResponse() }
   )
-```
-
-</details>
-
-### 👾 정렬기능에 대하여 Enum Class를 사용하였습니다.
-<details>
-<summary><code>enum class SortTodoSelector(val sort: Sort)</code></summary>
-    
-```kotlin
-/*
-Enum Class를 통해 쿼리에 적용 가능한 Sort객체를 지정하고, 그에 맞게 쿼리문을 실행하도록 하여
-쿼리함수의 최소화, 동적화를 도모
-*/
-{
-    SUCCESS_ASC_DATE_ASC(
-        Sort.by(
-            Sort.Order.asc("success"),
-            Sort.Order.asc("created")
-        )),
-    SUCCESS_DESC_DATE_ASC(
-        Sort.by(
-            Sort.Order.desc("success"),
-            Sort.Order.asc("created")
-        )),
-    SUCCESS_ASC_DATE_DESC(
-        Sort.by(
-            Sort.Order.asc("success"),
-            Sort.Order.desc("created")
-        )),
-    SUCCESS_DESC_DATE_DESC(
-        Sort.by(
-            Sort.Order.desc("success"),
-            Sort.Order.desc("created")
-        ));
-}
-```
-
-
-
-</details>
-
-
-### 👾 페이지 네이션과 관련하여 jpa Slice를 사용하였습니다.
-<details>
-<summary><code>override fun getAllTodoList(sortBy: SortTodoSelector, writer:String, page:Int): Slice<TodoResponse></code></summary>
-    
-```kotlin
-/*
-이전에 직접 쿼리를 통한 구현과 라이브러리를 쓰는 것중에
-여러 지원이 잘 되는 라이브러리를 쓰는게 좋을거 같았고,
-정렬처리를 직접 쿼리로 구현하지 않고, 인자로 넘겨주면 자동으로 해준다는 것에 매력을 느낌.
-Slice와 Page 둘중에 어떤것을 고를지 생각하다, 우선은 성능적으로 이점이 있고
-추후에 무한 스크롤로 확장 가능한 Slice가 좋겠다고 판단.
-Todo를 정말 웹사이트로 구현한다면 sns처럼 사용될것이라 추론
-*/
-val pageable:Pageable = PageRequest.of(page,5, sortBy.sort)
-val todoList = if (writer.isEmpty()) todoRepository.findAllWithSort(pageable)
 ```
 
 </details>
@@ -340,6 +267,80 @@ fun filterChain(http: HttpSecurity): SecurityFilterChain
 
 ```
 
+</details>
+
+### 👾 양방향 관계던 Todo와 Comment를 단방향으로 개선했습니다.
+<details>
+<summary><code>Class Todo</code></summary>
+    
+```kotlin
+//양방향 관계를 가지고 있는 것은 도메인 로직에 불필요 하다 판단,
+commment는 TodoId를 외래키로 가지고 있는 것 만으로도 충분하다 생각하였음.
+ @OneToMany
+    @JoinColumn(name = "todo_id")
+    val comments: MutableList<Comment> =mutableListOf(),
+
+class Comment{
+ @Column(name = "todo_id")
+    val todoId: Long,
+}
+```
+</details>
+
+### 👾 TestCode를 작성하였습니다.
+<details>
+<summary><code>TodoServiceTest</code></summary>
+    
+```kotlin
+ Given("Todo 목록이 존재하지 않을때") {
+
+        When("특정 Todo 을 요청하면") {
+
+            Then("EntityNotFoundException 이 발생해야 한다.") {
+                val todoId = 1L
+                every { todoRepository.findByIdOrNull(todoId) } returns null
+
+                shouldThrow<EntityNotFoundException> {
+                    println(todoService.getTodoById(todoId))
+                }
+
+            }
+
+        }
+    }
+```
+</details>
+
+### 👾 Spring Scheduler, Batch를 이용하여 SoftDelete기능을 구현했습니다.
+<details>
+<summary><code>Class Todo</code></summary>
+    
+```kotlin
+//Test를 위해 주기는 짧게 설정.
+  @Scheduled(cron = "0 */10 * * * *") // 10분마다 실행
+    fun performJob() {
+        try {
+            val jobParameters: JobParameters = JobParametersBuilder()
+                .addLong("startAt", System.currentTimeMillis())
+                .toJobParameters()
+            jobLauncher.run(settlementJob, jobParameters)
+        } catch (e: JobExecutionException) {
+            e.printStackTrace()
+        }
+    }
+
+
+//Dsl 로직으로, is_delete=true 컬럼을 찾아 삭제
+@Component
+class SettlementTasklet(
+    private val todoRepository: TodoRepository,
+):Tasklet {
+    override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
+        todoRepository.deleteByIsDelete()
+        return RepeatStatus.FINISHED
+    }
+}
+```
 </details>
 
 
